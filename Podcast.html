@@ -3,732 +3,211 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Lo que nos pasó — Conflicto Armado en Colombia</title>
+<title>Lo que nos pasó — Podcast Interactivo</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --ink: #0a0a0f;
-  --parchment: #f5f0e8;
-  --blood: #8b1a1a;
-  --blood-light: #c0392b;
-  --gold: #c9a84c;
-  --gold-dim: rgba(201,168,76,0.3);
-  --smoke: #1a1a24;
-  --ash: #2a2a3a;
-  --mist: #94a3b8;
-  --bone: #e2ddd5;
-  --olive: #556b2f;
-  --rust: #a0522d;
-  --serif: 'Playfair Display', Georgia, serif;
-  --sans: 'Source Sans 3', sans-serif;
-  --mono: 'JetBrains Mono', monospace;
+  --ink:#0a0a0f;--parchment:#f5f0e8;--blood:#8b1a1a;--blood-light:#c0392b;
+  --gold:#c9a84c;--gold-dim:rgba(201,168,76,0.3);--smoke:#1a1a24;--ash:#2a2a3a;
+  --mist:#94a3b8;--bone:#e2ddd5;--olive:#556b2f;
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Source Sans 3',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --l1:#7c3aed;--l2:#0891b2;--l3:#ea580c;--l4:#e11d48;--l5:#16a34a;
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--bone);font-family:var(--sans);font-weight:300;line-height:1.7;overflow-x:hidden}
+::selection{background:var(--blood);color:#fff}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ─── NAV ─── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 1.5rem;height:54px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,15,0.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,168,76,0.1);transform:translateY(-100%);transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.nav.visible{transform:translateY(0)}
+.nav-brand{font-family:var(--serif);font-size:.8rem;font-weight:700;color:var(--gold);letter-spacing:3px;text-transform:uppercase}
+.nav-links{display:flex;gap:3px}
+.nav-links a{color:var(--mist);text-decoration:none;font-size:.7rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:.35rem .65rem;border-radius:4px;transition:all .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--gold);background:rgba(201,168,76,.08)}
+.reading-progress{position:fixed;top:0;left:0;width:0%;height:2px;background:linear-gradient(to right,var(--blood),var(--gold));z-index:1001;transition:width .1s linear}
 
-html { scroll-behavior: smooth; }
+/* ─── MUSIC CONTROL ─── */
+.music-toggle{position:fixed;bottom:1.5rem;left:1.5rem;z-index:999;width:48px;height:48px;border-radius:50%;background:rgba(42,42,58,.95);backdrop-filter:blur(12px);border:1px solid rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.music-toggle:hover{border-color:var(--gold);transform:scale(1.08)}
+.music-toggle .bars{display:flex;align-items:end;gap:2px;height:18px}
+.music-toggle .mbar{width:3px;border-radius:1px;background:var(--gold);transition:height .3s}
+.music-toggle.playing .mbar{animation:mbar-dance 1s ease-in-out infinite}
+.music-toggle:not(.playing) .mbar{height:3px!important}
+@keyframes mbar-dance{0%,100%{height:4px}25%{height:16px}50%{height:8px}75%{height:14px}}
 
-body {
-  background: var(--ink);
-  color: var(--bone);
-  font-family: var(--sans);
-  font-weight: 300;
-  line-height: 1.7;
-  overflow-x: hidden;
-}
+/* ─── HERO ─── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;text-align:center;padding:2rem}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 80%,rgba(139,26,26,.15) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(201,168,76,.08) 0%,transparent 50%),radial-gradient(ellipse at 50% 50%,rgba(10,10,15,.9) 0%,var(--ink) 100%);z-index:1}
+.hero-particles{position:absolute;inset:0;z-index:0}
+.particle{position:absolute;width:2px;height:2px;background:rgba(201,168,76,.3);border-radius:50%;animation:float-particle linear infinite}
+@keyframes float-particle{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) scale(1);opacity:0}}
+.hero-content{position:relative;z-index:2;max-width:800px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:2rem;padding:.5rem 1.2rem;border:1px solid var(--gold-dim);border-radius:2px;opacity:0;transform:translateY(20px);animation:fadeUp 1s .5s forwards}
+.hero-badge .dot{width:6px;height:6px;background:var(--blood-light);border-radius:50%;animation:pulse-dot 2s infinite}
+.hero h1{font-family:var(--serif);font-size:clamp(2.4rem,7vw,4.8rem);font-weight:900;line-height:1.1;color:var(--parchment);margin-bottom:.5rem;opacity:0;transform:translateY(30px);animation:fadeUp 1.2s .8s forwards}
+.hero h1 em{font-style:italic;color:var(--gold);display:block;font-size:.55em;font-weight:400;margin-top:.3em}
+.hero-sub{font-size:1rem;color:var(--mist);max-width:540px;margin:1.5rem auto 2.5rem;opacity:0;transform:translateY(20px);animation:fadeUp 1s 1.2s forwards}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;background:var(--blood);color:#fff;border:none;padding:.8rem 2rem;border-radius:6px;font-size:.9rem;font-weight:600;font-family:var(--sans);cursor:pointer;transition:all .3s;opacity:0;animation:fadeUp 1s 1.5s forwards}
+.hero-cta:hover{background:var(--blood-light);transform:translateY(-2px);box-shadow:0 8px 24px rgba(139,26,26,.3)}
+.scroll-cue{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeUp 1s 2s forwards}
+.scroll-cue span{font-size:.62rem;color:var(--mist);letter-spacing:2px;text-transform:uppercase}
+.scroll-arrow{width:18px;height:18px;border-right:1.5px solid var(--gold);border-bottom:1.5px solid var(--gold);transform:rotate(45deg);animation:bounce-arrow 2s infinite}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes bounce-arrow{0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(45deg) translateY(6px)}}
 
-::selection { background: var(--blood); color: #fff; }
+/* ─── CHAPTER ─── */
+.chapter{position:relative;padding:5rem 2rem;max-width:1000px;margin:0 auto}
+.chapter-num{font-family:var(--mono);font-size:.68rem;color:var(--gold);letter-spacing:4px;text-transform:uppercase;margin-bottom:.4rem}
+.chapter-title{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.6rem);font-weight:700;color:var(--parchment);line-height:1.2;margin-bottom:.3rem}
+.chapter-speaker{font-size:.82rem;color:var(--gold);font-weight:600;margin-bottom:1.8rem;display:flex;align-items:center;gap:8px}
+.chapter-speaker::before{content:'';width:24px;height:1px;background:var(--gold)}
+.divider{width:100%;height:1px;background:linear-gradient(to right,transparent,var(--gold-dim),transparent)}
 
-/* ─── NAVIGATION ─── */
-.nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-  padding: 0 2rem;
-  height: 56px;
-  display: flex; align-items: center; justify-content: space-between;
-  background: rgba(10,10,15,0.85);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(201,168,76,0.1);
-  transform: translateY(-100%);
-  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
-}
-.nav.visible { transform: translateY(0); }
-.nav-brand {
-  font-family: var(--serif);
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--gold);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-}
-.nav-links { display: flex; gap: 0.25rem; }
-.nav-links a {
-  color: var(--mist);
-  text-decoration: none;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
-  transition: all 0.3s;
-}
-.nav-links a:hover, .nav-links a.active {
-  color: var(--gold);
-  background: rgba(201,168,76,0.08);
-}
+/* ─── LOCUTOR BAR ─── */
+.locutor-bar{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;padding:1rem 1.3rem;background:rgba(42,42,58,.3);border:1px solid rgba(201,168,76,.08);border-radius:8px}
+.locutor-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.82rem;font-weight:700;color:#fff;flex-shrink:0}
+.locutor-info h4{font-size:.9rem;color:var(--parchment)}
+.locutor-info p{font-size:.78rem;color:var(--mist)}
+.wave-anim{display:flex;align-items:center;gap:2px;margin-left:auto}
+.wave-anim .wbar{width:3px;border-radius:2px;animation:wave-bar 1.2s ease-in-out infinite}
+@keyframes wave-bar{0%,100%{height:4px}50%{height:16px}}
 
-/* ─── HERO / OPENING ─── */
-.hero {
-  min-height: 100vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  position: relative;
-  overflow: hidden;
-  text-align: center;
-  padding: 2rem;
-}
-.hero::before {
-  content: '';
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse at 20% 80%, rgba(139,26,26,0.15) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(10,10,15,0.9) 0%, var(--ink) 100%);
-  z-index: 1;
-}
-.hero-bg {
-  position: absolute; inset: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter></defs><rect width="100%" height="100%" filter="url(%23n)" opacity="0.04"/></svg>');
-  opacity: 0.5;
-}
-.hero-content { position: relative; z-index: 2; max-width: 800px; }
+/* ─── MEDIA UPLOAD ZONES ─── */
+.media-zone{margin:2rem 0;border-radius:10px;overflow:hidden;border:1px dashed rgba(201,168,76,.2);background:rgba(26,26,36,.4);transition:all .4s}
+.media-zone.has-media{border-style:solid;border-color:rgba(201,168,76,.3)}
+.upload-area{padding:2rem;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;transition:all .3s}
+.upload-area:hover{background:rgba(201,168,76,.03)}
+.upload-icon{width:56px;height:56px;border-radius:50%;background:rgba(201,168,76,.08);display:flex;align-items:center;justify-content:center;font-size:1.5rem;transition:all .3s}
+.upload-area:hover .upload-icon{background:rgba(201,168,76,.15);transform:scale(1.05)}
+.upload-title{font-size:.9rem;color:var(--parchment);font-weight:600}
+.upload-sub{font-size:.75rem;color:var(--mist);text-align:center;max-width:320px}
+.upload-btns{display:flex;gap:8px;margin-top:4px}
+.upload-btn{padding:.45rem 1rem;border-radius:5px;font-size:.78rem;font-weight:600;font-family:var(--sans);cursor:pointer;border:none;transition:all .3s}
+.upload-btn.video{background:var(--blood);color:#fff}
+.upload-btn.video:hover{background:var(--blood-light)}
+.upload-btn.audio{background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
+.upload-btn.audio:hover{background:rgba(201,168,76,.25)}
+input[type="file"]{display:none}
 
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  color: var(--gold);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 2rem;
-  padding: 0.5rem 1.2rem;
-  border: 1px solid var(--gold-dim);
-  border-radius: 2px;
-  opacity: 0; transform: translateY(20px);
-  animation: fadeUp 1s 0.5s forwards;
-}
-.hero-badge .dot {
-  width: 6px; height: 6px;
-  background: var(--blood-light);
-  border-radius: 50%;
-  animation: pulse-dot 2s infinite;
-}
+/* Media Preview */
+.media-preview{position:relative;background:#000;overflow:hidden}
+.media-preview video,.media-preview audio{width:100%;display:block}
+.media-preview video{max-height:450px;object-fit:contain;background:#000}
+.media-preview .audio-vis{padding:1.5rem;display:flex;align-items:center;gap:14px}
+.media-preview .audio-vis .av-icon{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;cursor:pointer;transition:all .3s}
+.media-preview .audio-vis .av-icon:hover{transform:scale(1.08)}
+.audio-wave-container{flex:1;height:48px;display:flex;align-items:center;gap:2px;overflow:hidden}
+.audio-wave-container .awbar{flex:1;min-width:2px;border-radius:1px;transition:height .15s}
+.media-controls{display:flex;align-items:center;gap:8px;padding:.8rem 1.2rem;background:rgba(10,10,15,.6)}
+.media-controls button{background:none;border:none;color:var(--bone);cursor:pointer;font-size:.85rem;padding:4px 8px;border-radius:4px;transition:all .2s}
+.media-controls button:hover{background:rgba(255,255,255,.08)}
+.media-controls .time{font-family:var(--mono);font-size:.72rem;color:var(--mist);margin-left:auto}
+.remove-media{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;z-index:5}
+.remove-media:hover{background:var(--blood)}
 
-.hero h1 {
-  font-family: var(--serif);
-  font-size: clamp(2.5rem, 7vw, 5rem);
-  font-weight: 900;
-  line-height: 1.1;
-  color: var(--parchment);
-  margin-bottom: 0.5rem;
-  opacity: 0; transform: translateY(30px);
-  animation: fadeUp 1.2s 0.8s forwards;
-}
-.hero h1 em {
-  font-style: italic;
-  color: var(--gold);
-  display: block;
-  font-size: 0.55em;
-  font-weight: 400;
-  margin-top: 0.3em;
-}
+/* ─── PROSE ─── */
+.prose{font-size:1.02rem;line-height:1.85;color:var(--bone);max-width:660px}
+.prose p{margin-bottom:1.4rem}
+.prose strong{color:var(--parchment);font-weight:600}
 
-.hero-sub {
-  font-size: 1.05rem;
-  color: var(--mist);
-  max-width: 560px;
-  margin: 1.5rem auto 2.5rem;
-  opacity: 0; transform: translateY(20px);
-  animation: fadeUp 1s 1.2s forwards;
-}
+.quote-block{position:relative;margin:2rem 0;padding:1.8rem 1.8rem 1.8rem 2.2rem;background:linear-gradient(135deg,rgba(139,26,26,.06),rgba(201,168,76,.04));border-left:3px solid var(--blood);border-radius:0 8px 8px 0}
+.quote-block p{font-family:var(--serif);font-size:1.1rem;font-style:italic;color:var(--parchment);line-height:1.7;margin:0}
+.quote-block cite{display:block;margin-top:.7rem;font-family:var(--sans);font-style:normal;font-size:.78rem;color:var(--mist)}
 
-.hero-line {
-  width: 1px; height: 80px;
-  background: linear-gradient(to bottom, var(--gold), transparent);
-  margin: 0 auto;
-  opacity: 0;
-  animation: fadeUp 1s 1.6s forwards;
-}
-
-.scroll-cue {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-  opacity: 0;
-  animation: fadeUp 1s 2s forwards;
-}
-.scroll-cue span {
-  font-size: 0.65rem;
-  color: var(--mist);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-.scroll-arrow {
-  width: 20px; height: 20px;
-  border-right: 1.5px solid var(--gold);
-  border-bottom: 1.5px solid var(--gold);
-  transform: rotate(45deg);
-  animation: bounce-arrow 2s infinite;
-}
-
-/* ─── SECTION STYLES ─── */
-.chapter {
-  position: relative;
-  padding: 6rem 2rem;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.chapter-num {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  color: var(--gold);
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-}
-
-.chapter-title {
-  font-family: var(--serif);
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  font-weight: 700;
-  color: var(--parchment);
-  margin-bottom: 0.3rem;
-  line-height: 1.2;
-}
-
-.chapter-speaker {
-  font-size: 0.85rem;
-  color: var(--gold);
-  font-weight: 600;
-  margin-bottom: 2rem;
-  display: flex; align-items: center; gap: 8px;
-}
-.chapter-speaker::before {
-  content: '';
-  width: 24px; height: 1px;
-  background: var(--gold);
-}
-
-.divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
-  margin: 0;
-}
-
-/* ─── CONTENT BLOCKS ─── */
-.prose {
-  font-size: 1.05rem;
-  line-height: 1.85;
-  color: var(--bone);
-  max-width: 680px;
-}
-.prose p { margin-bottom: 1.5rem; }
-.prose strong { color: var(--parchment); font-weight: 600; }
-
-.quote-block {
-  position: relative;
-  margin: 2.5rem 0;
-  padding: 2rem 2rem 2rem 2.5rem;
-  background: linear-gradient(135deg, rgba(139,26,26,0.06), rgba(201,168,76,0.04));
-  border-left: 3px solid var(--blood);
-  border-radius: 0 8px 8px 0;
-}
-.quote-block p {
-  font-family: var(--serif);
-  font-size: 1.15rem;
-  font-style: italic;
-  color: var(--parchment);
-  line-height: 1.7;
-  margin: 0;
-}
-.quote-block cite {
-  display: block;
-  margin-top: 0.8rem;
-  font-family: var(--sans);
-  font-style: normal;
-  font-size: 0.8rem;
-  color: var(--mist);
-}
-
-/* ─── ANIMATED COUNTERS ─── */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-  margin: 3rem 0;
-}
-.stat-card {
-  background: linear-gradient(145deg, rgba(42,42,58,0.5), rgba(26,26,36,0.8));
-  border: 1px solid rgba(201,168,76,0.1);
-  border-top: 3px solid var(--accent, var(--blood));
-  border-radius: 6px;
-  padding: 1.8rem;
-  text-align: center;
-  transition: transform 0.3s, border-color 0.3s;
-}
-.stat-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(201,168,76,0.3);
-}
-.stat-number {
-  font-family: var(--serif);
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--parchment);
-  line-height: 1;
-  margin-bottom: 0.5rem;
-}
-.stat-label {
-  font-size: 0.85rem;
-  color: var(--mist);
-  line-height: 1.4;
-}
+/* ─── STATS ─── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.2rem;margin:2.5rem 0}
+.stat-card{background:linear-gradient(145deg,rgba(42,42,58,.5),rgba(26,26,36,.8));border:1px solid rgba(201,168,76,.1);border-top:3px solid var(--accent,var(--blood));border-radius:6px;padding:1.5rem;text-align:center;transition:transform .3s}
+.stat-card:hover{transform:translateY(-3px)}
+.stat-number{font-family:var(--serif);font-size:2.2rem;font-weight:900;color:var(--parchment);line-height:1;margin-bottom:.4rem}
+.stat-label{font-size:.82rem;color:var(--mist);line-height:1.4}
 
 /* ─── TIMELINE ─── */
-.timeline {
-  position: relative;
-  margin: 3rem 0;
-  padding-left: 3rem;
-}
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 8px;
-  top: 0; bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--blood), var(--gold), var(--olive));
-}
-.tl-event {
-  position: relative;
-  margin-bottom: 2.5rem;
-  opacity: 0;
-  transform: translateX(-20px);
-  transition: all 0.6s cubic-bezier(0.16,1,0.3,1);
-}
-.tl-event.visible {
-  opacity: 1;
-  transform: translateX(0);
-}
-.tl-event::before {
-  content: '';
-  position: absolute;
-  left: -27px; top: 6px;
-  width: 12px; height: 12px;
-  border-radius: 50%;
-  background: var(--blood);
-  border: 2px solid var(--ink);
-  box-shadow: 0 0 0 3px rgba(139,26,26,0.3);
-}
-.tl-year {
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  color: var(--gold);
-  font-weight: 600;
-  letter-spacing: 1px;
-}
-.tl-event h4 {
-  font-family: var(--serif);
-  font-size: 1.15rem;
-  color: var(--parchment);
-  margin: 0.2rem 0 0.4rem;
-}
-.tl-event p {
-  font-size: 0.9rem;
-  color: var(--mist);
-  line-height: 1.6;
-}
+.timeline{position:relative;margin:2.5rem 0;padding-left:2.8rem}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--blood),var(--gold),var(--olive))}
+.tl-event{position:relative;margin-bottom:2.2rem;opacity:0;transform:translateX(-20px);transition:all .6s cubic-bezier(.16,1,.3,1)}
+.tl-event.visible{opacity:1;transform:translateX(0)}
+.tl-event::before{content:'';position:absolute;left:-25px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--blood);border:2px solid var(--ink);box-shadow:0 0 0 3px rgba(139,26,26,.3)}
+.tl-year{font-family:var(--mono);font-size:.78rem;color:var(--gold);font-weight:600;letter-spacing:1px}
+.tl-event h4{font-family:var(--serif);font-size:1.1rem;color:var(--parchment);margin:.15rem 0 .3rem}
+.tl-event p{font-size:.87rem;color:var(--mist);line-height:1.6}
 
-/* ─── CAUSES GRID ─── */
-.causes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.2rem;
-  margin: 2.5rem 0;
-}
-.cause-card {
-  background: rgba(42,42,58,0.3);
-  border: 1px solid rgba(201,168,76,0.08);
-  border-radius: 8px;
-  padding: 1.5rem;
-  transition: all 0.4s;
-  opacity: 0;
-  transform: translateY(20px);
-}
-.cause-card.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.cause-card:hover {
-  background: rgba(42,42,58,0.5);
-  border-color: rgba(201,168,76,0.2);
-  transform: translateY(-3px);
-}
-.cause-icon {
-  font-size: 2rem;
-  margin-bottom: 0.8rem;
-}
-.cause-card h4 {
-  font-family: var(--serif);
-  font-size: 1rem;
-  color: var(--parchment);
-  margin-bottom: 0.4rem;
-}
-.cause-card p {
-  font-size: 0.85rem;
-  color: var(--mist);
-  line-height: 1.6;
-}
+/* ─── CAUSES ─── */
+.causes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.1rem;margin:2rem 0}
+.cause-card{background:rgba(42,42,58,.3);border:1px solid rgba(201,168,76,.08);border-radius:8px;padding:1.4rem;transition:all .4s;opacity:0;transform:translateY(20px)}
+.cause-card.visible{opacity:1;transform:translateY(0)}
+.cause-card:hover{background:rgba(42,42,58,.5);border-color:rgba(201,168,76,.2);transform:translateY(-3px)}
+.cause-icon{font-size:1.8rem;margin-bottom:.7rem}
+.cause-card h4{font-family:var(--serif);font-size:.95rem;color:var(--parchment);margin-bottom:.3rem}
+.cause-card p{font-size:.82rem;color:var(--mist);line-height:1.6}
+
+/* ─── IMPACT ─── */
+.impact-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.2rem;margin:2rem 0}
+.impact-card{padding:1.8rem;border-radius:8px;border:1px solid rgba(201,168,76,.08);transition:all .4s;opacity:0;transform:scale(.95)}
+.impact-card.visible{opacity:1;transform:scale(1)}
+.impact-card:hover{border-color:rgba(201,168,76,.2)}
+.impact-card h4{font-family:var(--serif);font-size:1.05rem;color:var(--parchment);margin-bottom:.5rem}
+.impact-card p{font-size:.85rem;color:var(--mist);line-height:1.65}
 
 /* ─── VIDEO EMBED ─── */
-.video-section {
-  margin: 3rem 0;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid rgba(201,168,76,0.15);
-  background: rgba(26,26,36,0.6);
-}
-.video-container {
-  position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
-  overflow: hidden;
-}
-.video-container iframe {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  border: none;
-}
-.video-caption {
-  padding: 1rem 1.5rem;
-  display: flex; align-items: center; gap: 10px;
-}
-.video-caption .v-icon {
-  width: 32px; height: 32px;
-  background: rgba(139,26,26,0.2);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.8rem;
-  flex-shrink: 0;
-}
-.video-caption .v-text h5 {
-  font-size: 0.85rem;
-  color: var(--parchment);
-  margin-bottom: 2px;
-}
-.video-caption .v-text p {
-  font-size: 0.75rem;
-  color: var(--mist);
-}
+.video-section{margin:2.5rem 0;border-radius:10px;overflow:hidden;border:1px solid rgba(201,168,76,.12);background:rgba(26,26,36,.6)}
+.video-container{position:relative;padding-bottom:56.25%;height:0;overflow:hidden}
+.video-container iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.video-caption{padding:.8rem 1.2rem;display:flex;align-items:center;gap:10px}
+.video-caption .v-icon{width:28px;height:28px;background:rgba(139,26,26,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+.video-caption .v-text h5{font-size:.82rem;color:var(--parchment);margin-bottom:1px}
+.video-caption .v-text p{font-size:.72rem;color:var(--mist)}
 
-/* ─── INTERACTIVE MAP ─── */
-.map-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 1.5rem;
-  margin: 2.5rem 0;
-  align-items: start;
-}
-@media(max-width:768px) {
-  .map-wrapper { grid-template-columns: 1fr; }
-}
-.map-svg-wrap {
-  background: rgba(13,33,55,0.6);
-  border: 1px solid rgba(201,168,76,0.1);
-  border-radius: 10px;
-  padding: 1.5rem;
-  overflow: hidden;
-}
-.map-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.map-info-card {
-  background: rgba(42,42,58,0.4);
-  border: 1px solid rgba(201,168,76,0.1);
-  border-radius: 8px;
-  padding: 1.3rem;
-  transition: all 0.4s;
-}
-.map-info-card h3 {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  color: var(--gold);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 0.8rem;
-}
-.map-region-name {
-  font-family: var(--serif);
-  font-size: 1.3rem;
-  color: var(--parchment);
-  margin-bottom: 0.2rem;
-}
-.map-region-place {
-  font-size: 0.8rem;
-  color: var(--mist);
-  margin-bottom: 0.8rem;
-}
-.map-region-desc {
-  font-size: 0.85rem;
-  color: var(--bone);
-  line-height: 1.6;
-}
-.actor-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.8rem; }
-.actor-badge {
-  font-size: 0.7rem;
-  padding: 3px 10px;
-  border-radius: 3px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
+/* ─── MAP ─── */
+.map-wrapper{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;margin:2rem 0;align-items:start}
+@media(max-width:768px){.map-wrapper{grid-template-columns:1fr}}
+.map-svg-wrap{background:rgba(13,33,55,.5);border:1px solid rgba(201,168,76,.1);border-radius:10px;padding:1.2rem;overflow:hidden}
+.map-panel{display:flex;flex-direction:column;gap:1rem}
+.map-info-card{background:rgba(42,42,58,.4);border:1px solid rgba(201,168,76,.1);border-radius:8px;padding:1.2rem;transition:all .4s}
+.map-info-card h3{font-family:var(--mono);font-size:.62rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:.7rem}
+.map-region-name{font-family:var(--serif);font-size:1.2rem;color:var(--parchment);margin-bottom:.15rem}
+.map-region-place{font-size:.78rem;color:var(--mist);margin-bottom:.7rem}
+.map-region-desc{font-size:.83rem;color:var(--bone);line-height:1.6}
+.actor-badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:.7rem}
+.actor-badge{font-size:.68rem;padding:2px 9px;border-radius:3px;font-weight:600;letter-spacing:.3px}
+.region-path{cursor:pointer;stroke:rgba(10,10,15,.8);stroke-width:1.2;transition:all .3s}
+.region-path:hover{opacity:.75;filter:brightness(1.2)}
+.region-path.selected{stroke:var(--gold);stroke-width:2.5;filter:brightness(1.3)}
+.region-label{font-size:7.5px;fill:rgba(255,255,255,.9);font-family:var(--sans);font-weight:600;text-anchor:middle;pointer-events:none}
 
-/* ─── LOCUTOR INDICATOR ─── */
-.locutor-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 2rem;
-  padding: 1rem 1.5rem;
-  background: rgba(42,42,58,0.3);
-  border: 1px solid rgba(201,168,76,0.08);
-  border-radius: 8px;
-}
-.locutor-avatar {
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono);
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #fff;
-  flex-shrink: 0;
-}
-.locutor-info h4 { font-size: 0.95rem; color: var(--parchment); }
-.locutor-info p { font-size: 0.8rem; color: var(--mist); }
-.wave-anim {
-  display: flex; align-items: center; gap: 2px;
-  margin-left: auto;
-}
-.wave-anim .wbar {
-  width: 3px;
-  background: var(--gold);
-  border-radius: 2px;
-  animation: wave-bar 1.2s ease-in-out infinite;
-}
-
-/* ─── IMPACT CARDS ─── */
-.impact-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin: 2.5rem 0;
-}
-.impact-card {
-  padding: 2rem;
-  border-radius: 8px;
-  border: 1px solid rgba(201,168,76,0.08);
-  transition: all 0.4s;
-  opacity: 0;
-  transform: scale(0.95);
-}
-.impact-card.visible {
-  opacity: 1;
-  transform: scale(1);
-}
-.impact-card:hover { border-color: rgba(201,168,76,0.2); }
-.impact-card h4 {
-  font-family: var(--serif);
-  font-size: 1.1rem;
-  color: var(--parchment);
-  margin-bottom: 0.6rem;
-}
-.impact-card p {
-  font-size: 0.88rem;
-  color: var(--mist);
-  line-height: 1.65;
-}
+/* ─── SECTION SEP ─── */
+.section-sep{position:relative;height:160px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.section-sep::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(139,26,26,.06),transparent 70%)}
+.sep-text{font-family:var(--serif);font-size:clamp(3rem,10vw,7rem);font-weight:900;color:rgba(201,168,76,.035);letter-spacing:-2px;user-select:none}
 
 /* ─── FOOTER ─── */
-.footer {
-  text-align: center;
-  padding: 4rem 2rem 3rem;
-  border-top: 1px solid rgba(201,168,76,0.08);
-}
-.footer p {
-  font-size: 0.8rem;
-  color: var(--mist);
-  line-height: 1.8;
-}
-.footer .brand {
-  font-family: var(--serif);
-  font-size: 1rem;
-  color: var(--gold);
-  margin-bottom: 0.5rem;
-}
+.footer{text-align:center;padding:4rem 2rem 3rem;border-top:1px solid rgba(201,168,76,.08)}
+.footer p{font-size:.78rem;color:var(--mist);line-height:1.8}
+.footer .brand{font-family:var(--serif);font-size:1rem;color:var(--gold);margin-bottom:.5rem}
 
-/* ─── ANIMATIONS ─── */
-@keyframes fadeUp {
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-@keyframes bounce-arrow {
-  0%, 100% { transform: rotate(45deg) translateY(0); }
-  50% { transform: rotate(45deg) translateY(6px); }
-}
-@keyframes wave-bar {
-  0%, 100% { height: 4px; }
-  50% { height: 18px; }
-}
-
-.reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
-}
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ─── AUDIO PLAYER ─── */
-.audio-float {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 999;
-  background: rgba(42,42,58,0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(201,168,76,0.2);
-  border-radius: 12px;
-  padding: 1rem 1.2rem;
-  display: flex; align-items: center; gap: 10px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  cursor: pointer;
-  transition: all 0.3s;
-  max-width: 280px;
-}
-.audio-float:hover {
-  border-color: var(--gold);
-  transform: translateY(-2px);
-}
-.audio-play-btn {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  background: var(--blood);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.3s;
-}
-.audio-play-btn:hover { background: var(--blood-light); }
-.audio-play-btn svg { fill: #fff; width: 16px; height: 16px; }
-.audio-info { min-width: 0; }
-.audio-info .a-title {
-  font-size: 0.78rem;
-  color: var(--parchment);
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.audio-info .a-sub {
-  font-size: 0.65rem;
-  color: var(--mist);
-}
-
-/* ─── PROGRESS BAR ─── */
-.reading-progress {
-  position: fixed;
-  top: 0; left: 0;
-  width: 0%;
-  height: 2px;
-  background: linear-gradient(to right, var(--blood), var(--gold));
-  z-index: 1001;
-  transition: width 0.1s linear;
-}
+/* ─── REVEAL ─── */
+.reveal{opacity:0;transform:translateY(25px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
 
 /* ─── RESPONSIVE ─── */
-@media (max-width: 640px) {
-  .chapter { padding: 4rem 1.2rem; }
-  .stats-grid { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
-  .stat-card { padding: 1.2rem; }
-  .stat-number { font-size: 1.8rem; }
-  .nav-links a { font-size: 0.65rem; padding: 0.3rem 0.5rem; }
-  .audio-float { bottom: 0.8rem; right: 0.8rem; }
-}
-
-/* ─── SECTION SEPARATORS ─── */
-.section-sep {
-  position: relative;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-.section-sep::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, rgba(139,26,26,0.08), transparent 70%);
-}
-.sep-text {
-  font-family: var(--serif);
-  font-size: clamp(3rem, 10vw, 8rem);
-  font-weight: 900;
-  color: rgba(201,168,76,0.04);
-  letter-spacing: -2px;
-  user-select: none;
-}
-
-/* Map SVG styles */
-.region-path {
-  cursor: pointer;
-  stroke: rgba(10,10,15,0.8);
-  stroke-width: 1.2;
-  transition: all 0.3s;
-}
-.region-path:hover { opacity: 0.75; filter: brightness(1.2); }
-.region-path.selected {
-  stroke: var(--gold);
-  stroke-width: 2.5;
-  filter: brightness(1.3);
-}
-.region-label {
-  font-size: 7.5px;
-  fill: rgba(255,255,255,0.9);
-  font-family: var(--sans);
-  font-weight: 600;
-  text-anchor: middle;
-  pointer-events: none;
+@media(max-width:640px){
+  .chapter{padding:3.5rem 1.2rem}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:.7rem}
+  .stat-card{padding:1rem}
+  .stat-number{font-size:1.7rem}
+  .nav-links a{font-size:.6rem;padding:.25rem .4rem}
+  .upload-area{padding:1.5rem}
+  .video-grid-2{grid-template-columns:1fr!important}
 }
 </style>
 </head>
 <body>
 
-<!-- Reading Progress -->
 <div class="reading-progress" id="readingProgress"></div>
 
-<!-- Navigation -->
 <nav class="nav" id="mainNav">
   <div class="nav-brand">Lo que nos pasó</div>
   <div class="nav-links">
@@ -737,412 +216,334 @@ body {
     <a href="#violencia">Violencia</a>
     <a href="#consecuencias">Impacto</a>
     <a href="#presente">Presente</a>
-    <a href="#mapa">Mapa</a>
+    <a href="#mapa-section">Mapa</a>
   </div>
 </nav>
 
+<!-- Music Toggle -->
+<div class="music-toggle" id="musicToggle" title="Música ambiental">
+  <div class="bars">
+    <div class="mbar" style="height:4px;animation-delay:0s"></div>
+    <div class="mbar" style="height:8px;animation-delay:.15s"></div>
+    <div class="mbar" style="height:12px;animation-delay:.3s"></div>
+    <div class="mbar" style="height:6px;animation-delay:.45s"></div>
+  </div>
+</div>
+
 <!-- ═══════════════ HERO ═══════════════ -->
 <section class="hero" id="intro">
-  <div class="hero-bg"></div>
+  <div class="hero-particles" id="particles"></div>
   <div class="hero-content">
-    <div class="hero-badge">
-      <span class="dot"></span>
-      Podcast Académico · Módulo 1 · IPAZUD
-    </div>
-    <h1>
-      Lo que nos pasó
-      <em>El conflicto armado colombiano</em>
-    </h1>
-    <p class="hero-sub">Un recorrido por los orígenes, las causas estructurales y las consecuencias del conflicto armado en Colombia, contado por cinco voces universitarias.</p>
-    <div class="hero-line"></div>
+    <div class="hero-badge"><span class="dot"></span>Podcast Académico · Módulo 1 · IPAZUD</div>
+    <h1>Lo que nos pasó<em>El conflicto armado colombiano</em></h1>
+    <p class="hero-sub">Un recorrido interactivo por los orígenes, las causas estructurales y las consecuencias del conflicto armado en Colombia, contado por cinco voces universitarias.</p>
+    <button class="hero-cta" onclick="document.getElementById('sec1').scrollIntoView({behavior:'smooth'})">
+      ▶ Comenzar experiencia
+    </button>
   </div>
-  <div class="scroll-cue">
-    <span>Explorar</span>
-    <div class="scroll-arrow"></div>
-  </div>
+  <div class="scroll-cue"><span>Desliza para explorar</span><div class="scroll-arrow"></div></div>
 </section>
 
 <!-- ═══════════════ SECCIÓN 1: INTRODUCCIÓN ═══════════════ -->
 <div class="divider"></div>
-<section class="chapter" id="intro-section">
+<section class="chapter" id="sec1">
   <div class="reveal">
-    <div class="chapter-num">Sección 01</div>
+    <div class="chapter-num">Sección 01 · 0:00 – 4:00</div>
     <div class="chapter-title">Bienvenida y presentación</div>
-    <div class="chapter-speaker">Locutor 1 — Conductor principal · 4 min</div>
+    <div class="chapter-speaker">Locutor 1 — Conductor principal</div>
   </div>
-
-  <div class="locutor-bar reveal" style="transition-delay:0.1s">
-    <div class="locutor-avatar" style="background:#7c3aed">L1</div>
-    <div class="locutor-info">
-      <h4>Locutor 1</h4>
-      <p>Conductor principal — Guía la conversación</p>
-    </div>
+  <div class="locutor-bar reveal">
+    <div class="locutor-avatar" style="background:var(--l1)">L1</div>
+    <div class="locutor-info"><h4>Locutor 1</h4><p>Conductor principal — Guía la conversación</p></div>
     <div class="wave-anim">
-      <div class="wbar" style="animation-delay:0s;height:4px"></div>
-      <div class="wbar" style="animation-delay:0.15s;height:8px"></div>
-      <div class="wbar" style="animation-delay:0.3s;height:12px"></div>
-      <div class="wbar" style="animation-delay:0.45s;height:6px"></div>
-      <div class="wbar" style="animation-delay:0.6s;height:10px"></div>
+      <div class="wbar" style="animation-delay:0s;height:4px;background:var(--l1)"></div>
+      <div class="wbar" style="animation-delay:.15s;height:8px;background:var(--l1)"></div>
+      <div class="wbar" style="animation-delay:.3s;height:12px;background:var(--l1)"></div>
+      <div class="wbar" style="animation-delay:.45s;height:6px;background:var(--l1)"></div>
+      <div class="wbar" style="animation-delay:.6s;height:10px;background:var(--l1)"></div>
     </div>
   </div>
 
-  <div class="prose reveal" style="transition-delay:0.2s">
+  <!-- MEDIA UPLOAD ZONE -->
+  <div class="media-zone" id="mz-1">
+    <div class="upload-area" id="ua-1">
+      <div class="upload-icon">🎙️</div>
+      <div class="upload-title">Agrega tu contenido multimedia</div>
+      <div class="upload-sub">Sube el video o audio de la grabación de esta sección del podcast</div>
+      <div class="upload-btns">
+        <button class="upload-btn video" onclick="event.stopPropagation();document.getElementById('vi-1').click()">📹 Subir Video</button>
+        <button class="upload-btn audio" onclick="event.stopPropagation();document.getElementById('ai-1').click()">🎵 Subir Audio</button>
+      </div>
+      <input type="file" id="vi-1" accept="video/*" onchange="handleMedia(this,'mz-1','video')">
+      <input type="file" id="ai-1" accept="audio/*" onchange="handleMedia(this,'mz-1','audio')">
+    </div>
+  </div>
+
+  <div class="prose reveal">
     <p><strong>«Hola, bienvenidos y bienvenidas.»</strong> Mi nombre es [nombre], y junto a mis compañeros hoy les traemos un podcast sobre uno de los temas más importantes de nuestra historia reciente: <strong>el conflicto armado en Colombia</strong>. Un fenómeno que marcó profundamente la vida de millones de personas, y que todavía hoy sigue siendo parte de nuestra realidad.</p>
     <p>En este episodio estaremos cinco voces: el Locutor 2 nos hablará de los orígenes y las causas del conflicto; el Locutor 3 abordará las olas de violencia y la magnitud del daño; el Locutor 4 nos compartirá el impacto humano y social; y el Locutor 5 nos llevará a una reflexión sobre el presente.</p>
   </div>
-
-  <div class="quote-block reveal" style="transition-delay:0.3s">
+  <div class="quote-block reveal">
     <p>Este primer módulo busca responder tres preguntas fundamentales: ¿Qué nos pasó? ¿Por qué nos pasó? Y ¿Qué hizo posible que esto nos pasara?</p>
     <cite>— Las tres preguntas guía del podcast</cite>
   </div>
-
-  <div class="prose reveal" style="transition-delay:0.35s">
+  <div class="prose reveal">
     <p>Estas tres preguntas no son sencillas de responder. Requieren que miremos la historia sin miedo, que reconozcamos las causas, los actores, y sobre todo, las consecuencias que tuvo este conflicto sobre las personas, las familias, las comunidades y el país entero.</p>
   </div>
 </section>
 
-<!-- Separator -->
 <div class="section-sep"><span class="sep-text">ORÍGENES</span></div>
 
-<!-- ═══════════════ SECCIÓN 2: ORÍGENES Y CAUSAS ═══════════════ -->
+<!-- ═══════════════ SECCIÓN 2: ORÍGENES ═══════════════ -->
 <section class="chapter" id="origenes">
   <div class="reveal">
-    <div class="chapter-num">Sección 02</div>
+    <div class="chapter-num">Sección 02 · 4:10 – 9:40</div>
     <div class="chapter-title">Orígenes y causas del conflicto</div>
-    <div class="chapter-speaker">Locutor 2 — Analista histórico · 6 min</div>
+    <div class="chapter-speaker">Locutor 2 — Analista histórico</div>
   </div>
-
-  <div class="locutor-bar reveal" style="transition-delay:0.1s">
-    <div class="locutor-avatar" style="background:#0891b2">L2</div>
-    <div class="locutor-info">
-      <h4>Locutor 2</h4>
-      <p>Analista histórico — Contexto y causas estructurales</p>
-    </div>
+  <div class="locutor-bar reveal">
+    <div class="locutor-avatar" style="background:var(--l2)">L2</div>
+    <div class="locutor-info"><h4>Locutor 2</h4><p>Analista histórico — Contexto y causas estructurales</p></div>
     <div class="wave-anim">
-      <div class="wbar" style="animation-delay:0s;height:4px;background:#0891b2"></div>
-      <div class="wbar" style="animation-delay:0.15s;height:8px;background:#0891b2"></div>
-      <div class="wbar" style="animation-delay:0.3s;height:12px;background:#0891b2"></div>
-      <div class="wbar" style="animation-delay:0.45s;height:6px;background:#0891b2"></div>
-      <div class="wbar" style="animation-delay:0.6s;height:10px;background:#0891b2"></div>
+      <div class="wbar" style="animation-delay:0s;height:4px;background:var(--l2)"></div>
+      <div class="wbar" style="animation-delay:.15s;height:8px;background:var(--l2)"></div>
+      <div class="wbar" style="animation-delay:.3s;height:12px;background:var(--l2)"></div>
+      <div class="wbar" style="animation-delay:.45s;height:6px;background:var(--l2)"></div>
+      <div class="wbar" style="animation-delay:.6s;height:10px;background:var(--l2)"></div>
     </div>
   </div>
 
-  <div class="prose reveal" style="transition-delay:0.2s">
-    <p>Para entender el conflicto armado en Colombia, hay que remontarse a mediados del siglo XX. <strong>El conflicto no nació de un día para otro:</strong> fue el resultado de profundas desigualdades estructurales que se acumularon durante décadas. La violencia bipartidista de los años cuarenta y cincuenta, conocida simplemente como <strong>«La Violencia»</strong>, dejó más de doscientas mil personas muertas y sembró el terreno para lo que vendría después.</p>
-  </div>
-
-  <!-- Causas estructurales -->
-  <div style="margin:2.5rem 0">
-    <h3 style="font-family:var(--serif);font-size:1.2rem;color:var(--parchment);margin-bottom:1.2rem" class="reveal">Las tres causas estructurales</h3>
-    <div class="causes-grid">
-      <div class="cause-card" style="transition-delay:0.1s">
-        <div class="cause-icon">🌾</div>
-        <h4>Desigualdad en la tierra</h4>
-        <p>Colombia ha sido históricamente un país donde la propiedad rural estuvo concentrada en pocas manos, dejando a millones de campesinos sin acceso a ella.</p>
+  <div class="media-zone" id="mz-2">
+    <div class="upload-area" id="ua-2">
+      <div class="upload-icon">🎙️</div>
+      <div class="upload-title">Agrega tu contenido multimedia</div>
+      <div class="upload-sub">Sube el video o audio del Locutor 2 — Orígenes y causas</div>
+      <div class="upload-btns">
+        <button class="upload-btn video" onclick="event.stopPropagation();document.getElementById('vi-2').click()">📹 Subir Video</button>
+        <button class="upload-btn audio" onclick="event.stopPropagation();document.getElementById('ai-2').click()">🎵 Subir Audio</button>
       </div>
-      <div class="cause-card" style="transition-delay:0.2s">
-        <div class="cause-icon">🗳️</div>
-        <h4>Exclusión política</h4>
-        <p>El sistema bipartidista del Frente Nacional cerró las puertas a otras formas de participación, generando frustración y radicalización en sectores de la población.</p>
-      </div>
-      <div class="cause-card" style="transition-delay:0.3s">
-        <div class="cause-icon">🏚️</div>
-        <h4>Pobreza estructural rural</h4>
-        <p>El Estado era prácticamente inexistente en zonas rurales y la periferia del país, dejando comunidades sin servicios ni protección.</p>
-      </div>
-      <div class="cause-card" style="transition-delay:0.4s">
-        <div class="cause-icon">💊</div>
-        <h4>Narcotráfico</h4>
-        <p>Desde los años ochenta, el tráfico de cocaína se convirtió en una fuente de financiación tanto para guerrillas como para paramilitares, prolongando el conflicto.</p>
-      </div>
+      <input type="file" id="vi-2" accept="video/*" onchange="handleMedia(this,'mz-2','video')">
+      <input type="file" id="ai-2" accept="audio/*" onchange="handleMedia(this,'mz-2','audio')">
     </div>
   </div>
 
   <div class="prose reveal">
-    <p>En ese contexto nacieron los grupos guerrilleros. <strong>Las FARC-EP surgieron en 1964</strong> como una guerrilla de origen campesino, con un discurso ideológico de izquierda marxista. El ELN apareció ese mismo año con influencia de la Revolución Cubana. Más adelante, surgieron otros actores como el M-19, el EPL y grupos paramilitares como las AUC, estos últimos financiados en parte por terratenientes, ganaderos y, más adelante, por el narcotráfico.</p>
+    <p>Para entender el conflicto armado en Colombia, hay que remontarse a mediados del siglo XX. <strong>El conflicto no nació de un día para otro:</strong> fue el resultado de profundas desigualdades estructurales acumuladas durante décadas. La violencia bipartidista de los años cuarenta y cincuenta, conocida como <strong>«La Violencia»</strong>, dejó más de doscientas mil personas muertas y sembró el terreno para lo que vendría después.</p>
+  </div>
+
+  <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--parchment);margin:2rem 0 1rem" class="reveal">Las causas estructurales</h3>
+  <div class="causes-grid">
+    <div class="cause-card" style="transition-delay:.1s"><div class="cause-icon">🌾</div><h4>Desigualdad en la tierra</h4><p>La propiedad rural estuvo concentrada en pocas manos, dejando a millones de campesinos sin acceso a ella.</p></div>
+    <div class="cause-card" style="transition-delay:.2s"><div class="cause-icon">🗳️</div><h4>Exclusión política</h4><p>El Frente Nacional cerró las puertas a otras formas de participación, generando frustración y radicalización.</p></div>
+    <div class="cause-card" style="transition-delay:.3s"><div class="cause-icon">🏚️</div><h4>Pobreza estructural rural</h4><p>El Estado era prácticamente inexistente en zonas rurales y la periferia del país.</p></div>
+    <div class="cause-card" style="transition-delay:.4s"><div class="cause-icon">💊</div><h4>Narcotráfico</h4><p>Desde los 80s, el tráfico de cocaína financió guerrillas y paramilitares, prolongando el conflicto.</p></div>
+  </div>
+
+  <div class="prose reveal">
+    <p>En ese contexto nacieron los grupos guerrilleros. <strong>Las FARC-EP surgieron en 1964</strong> como guerrilla de origen campesino. El ELN apareció ese mismo año. Más adelante surgieron el M-19, el EPL y grupos paramilitares como las AUC.</p>
   </div>
 
   <div class="quote-block reveal">
-    <p>La desigualdad no es la única causa, pero sin duda fue el terreno fértil que hizo posible que la semilla de la violencia germinara y se sostuviera por tanto tiempo. Un Estado más presente y una distribución más justa de la tierra habrían cambiado mucho la historia.</p>
+    <p>La desigualdad no es la única causa, pero sin duda fue el terreno fértil que hizo posible que la semilla de la violencia germinara y se sostuviera por tanto tiempo.</p>
     <cite>— Locutor 2, en respuesta a Locutor 1</cite>
   </div>
 
-  <!-- Timeline -->
-  <h3 style="font-family:var(--serif);font-size:1.2rem;color:var(--parchment);margin:2.5rem 0 1.2rem" class="reveal">Línea del tiempo del conflicto</h3>
+  <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--parchment);margin:2.5rem 0 1rem" class="reveal">Línea del tiempo</h3>
   <div class="timeline">
-    <div class="tl-event">
-      <div class="tl-year">1948</div>
-      <h4>El Bogotazo y «La Violencia»</h4>
-      <p>El asesinato de Jorge Eliécer Gaitán desata una ola de violencia bipartidista que dejará más de 200.000 muertos entre 1948 y 1958.</p>
-    </div>
-    <div class="tl-event">
-      <div class="tl-year">1958</div>
-      <h4>El Frente Nacional</h4>
-      <p>Liberales y conservadores pactan alternarse el poder. Aunque reduce la violencia bipartidista, excluye a otros sectores políticos.</p>
-    </div>
-    <div class="tl-event">
-      <div class="tl-year">1964</div>
-      <h4>Nacen las guerrillas</h4>
-      <p>Se fundan las FARC-EP (Marquetalia) y el ELN. Origen campesino e ideología marxista-leninista. Nace la insurgencia armada moderna.</p>
-    </div>
-    <div class="tl-event">
-      <div class="tl-year">1970s</div>
-      <h4>M-19 y otros movimientos</h4>
-      <p>Surgen nuevos grupos guerrilleros urbanos. El conflicto se diversifica y se extiende a las ciudades.</p>
-    </div>
-    <div class="tl-event">
-      <div class="tl-year">1980s</div>
-      <h4>Auge del narcotráfico</h4>
-      <p>El cartel de Medellín y el tráfico de coca financian actores armados. Los paramilitares se consolidan con apoyo de narcotraficantes y terratenientes.</p>
-    </div>
-    <div class="tl-event">
-      <div class="tl-year">1991</div>
-      <h4>Pico de violencia</h4>
-      <p>Más de 28.000 homicidios en un solo año. Tasa de 81 por cada 100.000 habitantes, una de las más altas del mundo.</p>
-    </div>
-    <div class="tl-event">
-      <div class="tl-year">1996–2005</div>
-      <h4>Periodo más cruento</h4>
-      <p>Masacres, desplazamiento masivo, disputas territoriales entre guerrillas y paramilitares alcanzan niveles sin precedentes.</p>
-    </div>
-    <div class="tl-event">
-      <div class="tl-year">2016</div>
-      <h4>Acuerdo de Paz</h4>
-      <p>Firma del Acuerdo Final entre el Gobierno de Colombia y las FARC-EP en La Habana, Cuba. Hito histórico para el país.</p>
-    </div>
+    <div class="tl-event"><div class="tl-year">1948</div><h4>El Bogotazo y «La Violencia»</h4><p>Asesinato de Gaitán. Más de 200.000 muertos en el conflicto bipartidista.</p></div>
+    <div class="tl-event"><div class="tl-year">1958</div><h4>El Frente Nacional</h4><p>Pacto bipartidista que excluye a otros sectores políticos.</p></div>
+    <div class="tl-event"><div class="tl-year">1964</div><h4>Nacen las guerrillas</h4><p>Fundación de FARC-EP y ELN. Origen campesino e ideología marxista.</p></div>
+    <div class="tl-event"><div class="tl-year">1980s</div><h4>Auge del narcotráfico</h4><p>El cartel de Medellín y la coca financian actores armados.</p></div>
+    <div class="tl-event"><div class="tl-year">1991</div><h4>Pico de violencia</h4><p>28.000 homicidios. Tasa de 81 por 100.000 habitantes.</p></div>
+    <div class="tl-event"><div class="tl-year">1996–05</div><h4>Periodo más cruento</h4><p>Masacres, desplazamiento masivo y barbarie sin precedentes.</p></div>
+    <div class="tl-event"><div class="tl-year">2016</div><h4>Acuerdo de Paz</h4><p>Firma del Acuerdo Final en La Habana, Cuba.</p></div>
   </div>
 
-  <!-- VIDEO -->
   <div class="video-section reveal">
-    <div class="video-container">
-      <iframe src="https://www.youtube.com/embed/T699mhr3Ds8" title="El silencio de los fusiles" allowfullscreen loading="lazy"></iframe>
-    </div>
-    <div class="video-caption">
-      <div class="v-icon">▶</div>
-      <div class="v-text">
-        <h5>El silencio de los fusiles</h5>
-        <p>Material audiovisual de apoyo sugerido por el docente</p>
-      </div>
-    </div>
+    <div class="video-container"><iframe src="https://www.youtube.com/embed/T699mhr3Ds8" title="El silencio de los fusiles" allowfullscreen loading="lazy"></iframe></div>
+    <div class="video-caption"><div class="v-icon">▶</div><div class="v-text"><h5>El silencio de los fusiles</h5><p>Material audiovisual sugerido por el docente</p></div></div>
   </div>
 </section>
 
-<!-- Separator -->
 <div class="section-sep"><span class="sep-text">VIOLENCIA</span></div>
 
-<!-- ═══════════════ SECCIÓN 3: VIOLENCIA Y MAGNITUD ═══════════════ -->
+<!-- ═══════════════ SECCIÓN 3: VIOLENCIA ═══════════════ -->
 <section class="chapter" id="violencia">
   <div class="reveal">
-    <div class="chapter-num">Sección 03</div>
+    <div class="chapter-num">Sección 03 · 10:10 – 16:40</div>
     <div class="chapter-title">Olas de violencia y magnitud del daño</div>
-    <div class="chapter-speaker">Locutor 3 — Narrador de hechos · 7 min</div>
+    <div class="chapter-speaker">Locutor 3 — Narrador de hechos</div>
   </div>
-
-  <div class="locutor-bar reveal" style="transition-delay:0.1s">
-    <div class="locutor-avatar" style="background:#ea580c">L3</div>
-    <div class="locutor-info">
-      <h4>Locutor 3</h4>
-      <p>Narrador de hechos — Cifras y dimensión del daño</p>
-    </div>
+  <div class="locutor-bar reveal">
+    <div class="locutor-avatar" style="background:var(--l3)">L3</div>
+    <div class="locutor-info"><h4>Locutor 3</h4><p>Narrador de hechos — Cifras y dimensión del daño</p></div>
     <div class="wave-anim">
-      <div class="wbar" style="animation-delay:0s;height:4px;background:#ea580c"></div>
-      <div class="wbar" style="animation-delay:0.15s;height:8px;background:#ea580c"></div>
-      <div class="wbar" style="animation-delay:0.3s;height:12px;background:#ea580c"></div>
-      <div class="wbar" style="animation-delay:0.45s;height:6px;background:#ea580c"></div>
-      <div class="wbar" style="animation-delay:0.6s;height:10px;background:#ea580c"></div>
+      <div class="wbar" style="animation-delay:0s;height:4px;background:var(--l3)"></div>
+      <div class="wbar" style="animation-delay:.15s;height:8px;background:var(--l3)"></div>
+      <div class="wbar" style="animation-delay:.3s;height:12px;background:var(--l3)"></div>
+      <div class="wbar" style="animation-delay:.45s;height:6px;background:var(--l3)"></div>
+      <div class="wbar" style="animation-delay:.6s;height:10px;background:var(--l3)"></div>
     </div>
   </div>
 
-  <div class="prose reveal" style="transition-delay:0.2s">
-    <p>El conflicto armado en Colombia no fue un fenómeno uniforme. Hubo periodos de mayor intensidad, lo que los investigadores llaman <strong>«olas de recrudecimiento»</strong>. La primera gran ola fue la época de La Violencia (1948–1958). La segunda correspondió al surgimiento y consolidación de los grupos guerrilleros entre los sesenta y setenta. La tercera, y quizás la más cruenta, coincidió con el auge del narcotráfico y el paramilitarismo en los ochenta y noventa.</p>
-  </div>
-
-  <!-- CIFRAS ANIMADAS -->
-  <h3 style="font-family:var(--serif);font-size:1.2rem;color:var(--parchment);margin:2.5rem 0 0.3rem" class="reveal">El peso del conflicto en cifras</h3>
-  <p style="font-size:0.8rem;color:var(--mist);margin-bottom:1.2rem" class="reveal">Fuente: Centro Nacional de Memoria Histórica (1958–2012)</p>
-
-  <div class="stats-grid" id="statsGrid">
-    <div class="stat-card" style="--accent:#dc2626">
-      <div class="stat-number" data-target="220000" data-format="mil">0</div>
-      <div class="stat-label">personas muertas en el conflicto</div>
-    </div>
-    <div class="stat-card" style="--accent:#ea580c">
-      <div class="stat-number" data-target="81" data-format="pct">0%</div>
-      <div class="stat-label">de las víctimas eran civiles</div>
-    </div>
-    <div class="stat-card" style="--accent:#7c3aed">
-      <div class="stat-number" data-target="8" data-format="mill">0</div>
-      <div class="stat-label">millones de personas desplazadas</div>
-    </div>
-    <div class="stat-card" style="--accent:#0891b2">
-      <div class="stat-number" data-target="16000" data-format="mil">0</div>
-      <div class="stat-label">menores reclutados por grupos armados</div>
-    </div>
-    <div class="stat-card" style="--accent:#e11d48">
-      <div class="stat-number" data-target="27000" data-format="mil+">0</div>
-      <div class="stat-label">secuestros documentados</div>
-    </div>
-    <div class="stat-card" style="--accent:#16a34a">
-      <div class="stat-number" data-target="10000" data-format="mil+">0</div>
-      <div class="stat-label">víctimas de minas antipersona</div>
+  <div class="media-zone" id="mz-3">
+    <div class="upload-area" id="ua-3">
+      <div class="upload-icon">🎙️</div>
+      <div class="upload-title">Agrega tu contenido multimedia</div>
+      <div class="upload-sub">Sube el video o audio del Locutor 3 — Olas de violencia</div>
+      <div class="upload-btns">
+        <button class="upload-btn video" onclick="event.stopPropagation();document.getElementById('vi-3').click()">📹 Subir Video</button>
+        <button class="upload-btn audio" onclick="event.stopPropagation();document.getElementById('ai-3').click()">🎵 Subir Audio</button>
+      </div>
+      <input type="file" id="vi-3" accept="video/*" onchange="handleMedia(this,'mz-3','video')">
+      <input type="file" id="ai-3" accept="audio/*" onchange="handleMedia(this,'mz-3','audio')">
     </div>
   </div>
 
   <div class="prose reveal">
-    <p>El periodo entre <strong>1996 y 2005</strong> fue el de mayor intensidad del conflicto. Las masacres se multiplicaron, el desplazamiento forzado alcanzó su punto más alto, y la disputa territorial entre guerrillas y paramilitares generó un nivel de barbarie sin precedentes en muchas regiones del país, especialmente en el Urabá antioqueño, los Llanos Orientales, el Pacífico y la costa Caribe.</p>
+    <p>El conflicto armado no fue uniforme. Hubo <strong>«olas de recrudecimiento»</strong>: La Violencia (1948–1958), el surgimiento guerrillero (60s–70s), y la más cruenta, coincidente con el auge del narcotráfico y el paramilitarismo (80s–90s).</p>
   </div>
 
+  <h3 style="font-family:var(--serif);font-size:1.15rem;color:var(--parchment);margin:2rem 0 .2rem" class="reveal">El peso del conflicto en cifras</h3>
+  <p style="font-size:.78rem;color:var(--mist);margin-bottom:1rem" class="reveal">Centro Nacional de Memoria Histórica (1958–2012)</p>
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card" style="--accent:#dc2626"><div class="stat-number" data-target="220000" data-format="mil">0</div><div class="stat-label">personas muertas</div></div>
+    <div class="stat-card" style="--accent:#ea580c"><div class="stat-number" data-target="81" data-format="pct">0%</div><div class="stat-label">de víctimas eran civiles</div></div>
+    <div class="stat-card" style="--accent:#7c3aed"><div class="stat-number" data-target="8" data-format="mill">0</div><div class="stat-label">millones desplazados</div></div>
+    <div class="stat-card" style="--accent:#0891b2"><div class="stat-number" data-target="16000" data-format="mil">0</div><div class="stat-label">menores reclutados</div></div>
+    <div class="stat-card" style="--accent:#e11d48"><div class="stat-number" data-target="27000" data-format="mil+">0</div><div class="stat-label">secuestros</div></div>
+    <div class="stat-card" style="--accent:#16a34a"><div class="stat-number" data-target="10000" data-format="mil+">0</div><div class="stat-label">víctimas de minas</div></div>
+  </div>
+
+  <div class="prose reveal">
+    <p>Entre <strong>1996 y 2005</strong> las masacres se multiplicaron, el desplazamiento forzado alcanzó su punto más alto y la disputa territorial entre guerrillas y paramilitares generó barbarie sin precedentes en Urabá, los Llanos Orientales, el Pacífico y la costa Caribe.</p>
+  </div>
   <div class="quote-block reveal">
-    <p>Departamentos como Antioquia, Chocó, Putumayo, Norte de Santander y Bolívar concentraron las mayores tasas de victimización. Estas zonas comparten algo en común: son territorios ricos en recursos naturales, con escasa presencia estatal y alta marginalidad histórica. Esa combinación fue, literalmente, mortal.</p>
-    <cite>— Locutor 3, en respuesta a Locutor 1</cite>
+    <p>Departamentos como Antioquia, Chocó, Putumayo, Norte de Santander y Bolívar concentraron las mayores tasas de victimización. Territorios ricos en recursos naturales, con escasa presencia estatal. Esa combinación fue, literalmente, mortal.</p>
+    <cite>— Locutor 3</cite>
   </div>
 </section>
 
-<!-- Separator -->
 <div class="section-sep"><span class="sep-text">IMPACTO</span></div>
 
-<!-- ═══════════════ SECCIÓN 4: CONSECUENCIAS HUMANAS ═══════════════ -->
+<!-- ═══════════════ SECCIÓN 4: CONSECUENCIAS ═══════════════ -->
 <section class="chapter" id="consecuencias">
   <div class="reveal">
-    <div class="chapter-num">Sección 04</div>
+    <div class="chapter-num">Sección 04 · 17:10 – 23:40</div>
     <div class="chapter-title">Consecuencias humanas y sociales</div>
-    <div class="chapter-speaker">Locutor 4 — Voz de las vivencias · 7 min</div>
+    <div class="chapter-speaker">Locutor 4 — Voz de las vivencias</div>
   </div>
-
-  <div class="locutor-bar reveal" style="transition-delay:0.1s">
-    <div class="locutor-avatar" style="background:#e11d48">L4</div>
-    <div class="locutor-info">
-      <h4>Locutor 4</h4>
-      <p>Voz de las vivencias — Impacto humano y social</p>
-    </div>
+  <div class="locutor-bar reveal">
+    <div class="locutor-avatar" style="background:var(--l4)">L4</div>
+    <div class="locutor-info"><h4>Locutor 4</h4><p>Voz de las vivencias — Impacto humano y social</p></div>
     <div class="wave-anim">
-      <div class="wbar" style="animation-delay:0s;height:4px;background:#e11d48"></div>
-      <div class="wbar" style="animation-delay:0.15s;height:8px;background:#e11d48"></div>
-      <div class="wbar" style="animation-delay:0.3s;height:12px;background:#e11d48"></div>
-      <div class="wbar" style="animation-delay:0.45s;height:6px;background:#e11d48"></div>
-      <div class="wbar" style="animation-delay:0.6s;height:10px;background:#e11d48"></div>
+      <div class="wbar" style="animation-delay:0s;height:4px;background:var(--l4)"></div>
+      <div class="wbar" style="animation-delay:.15s;height:8px;background:var(--l4)"></div>
+      <div class="wbar" style="animation-delay:.3s;height:12px;background:var(--l4)"></div>
+      <div class="wbar" style="animation-delay:.45s;height:6px;background:var(--l4)"></div>
+      <div class="wbar" style="animation-delay:.6s;height:10px;background:var(--l4)"></div>
     </div>
   </div>
 
-  <div class="prose reveal" style="transition-delay:0.2s">
-    <p>Las cifras que acabamos de escuchar son impactantes, pero <strong>detrás de cada número hay una persona, una familia, una comunidad</strong>. El conflicto armado no solo dejó muertos y desplazados: dejó heridas profundas que aún no han cicatrizado. Heridas en el cuerpo, en la memoria, en la identidad de las personas y de los pueblos.</p>
+  <div class="media-zone" id="mz-4">
+    <div class="upload-area" id="ua-4">
+      <div class="upload-icon">🎙️</div>
+      <div class="upload-title">Agrega tu contenido multimedia</div>
+      <div class="upload-sub">Sube el video o audio del Locutor 4 — Consecuencias humanas</div>
+      <div class="upload-btns">
+        <button class="upload-btn video" onclick="event.stopPropagation();document.getElementById('vi-4').click()">📹 Subir Video</button>
+        <button class="upload-btn audio" onclick="event.stopPropagation();document.getElementById('ai-4').click()">🎵 Subir Audio</button>
+      </div>
+      <input type="file" id="vi-4" accept="video/*" onchange="handleMedia(this,'mz-4','video')">
+      <input type="file" id="ai-4" accept="audio/*" onchange="handleMedia(this,'mz-4','audio')">
+    </div>
   </div>
 
-  <!-- Impact Cards -->
+  <div class="prose reveal">
+    <p><strong>Detrás de cada número hay una persona, una familia, una comunidad.</strong> El conflicto dejó heridas profundas que aún no han cicatrizado. Heridas en el cuerpo, en la memoria, en la identidad de las personas y de los pueblos.</p>
+  </div>
+
   <div class="impact-row">
-    <div class="impact-card" style="background:linear-gradient(145deg, rgba(220,38,38,0.06), rgba(42,42,58,0.3));transition-delay:0.1s">
-      <h4>💔 Impacto individual</h4>
-      <p>El conflicto generó traumas psicológicos severos. El miedo constante, la pérdida de seres queridos, el ser testigo de masacres o de la destrucción del hogar dejan marcas que no desaparecen fácilmente. Muchas personas vivieron en el desplazamiento por años, perdiendo no solo sus bienes materiales sino también su arraigo, su identidad cultural y sus redes de apoyo.</p>
-    </div>
-    <div class="impact-card" style="background:linear-gradient(145deg, rgba(234,88,12,0.06), rgba(42,42,58,0.3));transition-delay:0.2s">
-      <h4>👨‍👩‍👧‍👦 Impacto familiar</h4>
-      <p>El conflicto fracturó núcleos enteros. Padres que perdieron hijos reclutados a la fuerza. Niños que crecieron sin uno o ambos padres. Familias separadas por el desplazamiento que tardaron años en reunirse, o que nunca lograron hacerlo. Se estima que más de 16.000 niños y niñas fueron vinculados a grupos armados.</p>
-    </div>
-    <div class="impact-card" style="background:linear-gradient(145deg, rgba(124,58,237,0.06), rgba(42,42,58,0.3));transition-delay:0.3s">
-      <h4>🏘️ Impacto colectivo y territorial</h4>
-      <p>Comunidades enteras fueron destruidas. Pueblos que quedaron vacíos por las amenazas y masacres. Comunidades indígenas y afrocolombianas que vieron sus territorios ancestrales convertirse en escenarios de guerra. El tejido social se rompió: la desconfianza, el silencio y el miedo reemplazaron las relaciones comunitarias.</p>
-    </div>
+    <div class="impact-card" style="background:linear-gradient(145deg,rgba(220,38,38,.06),rgba(42,42,58,.3));transition-delay:.1s"><h4>💔 Impacto individual</h4><p>Traumas psicológicos severos. Miedo constante, pérdida de seres queridos, desplazamiento prolongado. Pérdida de arraigo, identidad cultural y redes de apoyo.</p></div>
+    <div class="impact-card" style="background:linear-gradient(145deg,rgba(234,88,12,.06),rgba(42,42,58,.3));transition-delay:.2s"><h4>👨‍👩‍👧‍👦 Impacto familiar</h4><p>Núcleos fracturados. Hijos reclutados a la fuerza. Familias separadas por el desplazamiento. Más de 16.000 menores vinculados a grupos armados.</p></div>
+    <div class="impact-card" style="background:linear-gradient(145deg,rgba(124,58,237,.06),rgba(42,42,58,.3));transition-delay:.3s"><h4>🏘️ Impacto colectivo</h4><p>Pueblos vaciados. Comunidades indígenas y afrocolombianas despojadas. El tejido social reemplazado por desconfianza, silencio y miedo.</p></div>
   </div>
 
   <div class="quote-block reveal">
     <p>«Uno salía a trabajar y no sabía si iba a volver. El miedo se volvió parte de la vida diaria. Ya no éramos los mismos de antes.»</p>
-    <cite>— Testimonio recogido por el Centro Nacional de Memoria Histórica</cite>
+    <cite>— Testimonio, Centro Nacional de Memoria Histórica</cite>
   </div>
 
-  <div class="prose reveal">
-    <p><strong>El papel de las mujeres:</strong> Las mujeres fueron víctimas desproporcionadas de la violencia sexual como arma de guerra. Pero también fueron protagonistas de la resistencia: fueron ellas quienes lideraron muchos procesos de búsqueda de desaparecidos, de reconstrucción comunitaria y de exigencia de verdad y justicia.</p>
-  </div>
-
-  <!-- VIDEO -->
   <div class="video-section reveal">
-    <div class="video-container">
-      <iframe src="https://www.youtube.com/embed/dxDBSPSJzIw" title="Rostros de paz" allowfullscreen loading="lazy"></iframe>
-    </div>
-    <div class="video-caption">
-      <div class="v-icon">▶</div>
-      <div class="v-text">
-        <h5>Rostros de paz</h5>
-        <p>Material audiovisual de apoyo sugerido por el docente</p>
-      </div>
-    </div>
+    <div class="video-container"><iframe src="https://www.youtube.com/embed/dxDBSPSJzIw" title="Rostros de paz" allowfullscreen loading="lazy"></iframe></div>
+    <div class="video-caption"><div class="v-icon">▶</div><div class="v-text"><h5>Rostros de paz</h5><p>Material audiovisual sugerido por el docente</p></div></div>
   </div>
 </section>
 
-<!-- Separator -->
 <div class="section-sep"><span class="sep-text">PRESENTE</span></div>
 
-<!-- ═══════════════ SECCIÓN 5: REFLEXIÓN Y CIERRE ═══════════════ -->
+<!-- ═══════════════ SECCIÓN 5: REFLEXIÓN ═══════════════ -->
 <section class="chapter" id="presente">
   <div class="reveal">
-    <div class="chapter-num">Sección 05</div>
+    <div class="chapter-num">Sección 05 · 24:10 – 30:00</div>
     <div class="chapter-title">Reflexión sobre el presente y cierre</div>
-    <div class="chapter-speaker">Locutor 5 — Reflexión y cierre · 6 min</div>
+    <div class="chapter-speaker">Locutor 5 — Reflexión y cierre</div>
   </div>
-
-  <div class="locutor-bar reveal" style="transition-delay:0.1s">
-    <div class="locutor-avatar" style="background:#16a34a">L5</div>
-    <div class="locutor-info">
-      <h4>Locutor 5</h4>
-      <p>Reflexión y cierre — Puentes pasado-presente</p>
-    </div>
+  <div class="locutor-bar reveal">
+    <div class="locutor-avatar" style="background:var(--l5)">L5</div>
+    <div class="locutor-info"><h4>Locutor 5</h4><p>Reflexión y cierre — Puentes pasado-presente</p></div>
     <div class="wave-anim">
-      <div class="wbar" style="animation-delay:0s;height:4px;background:#16a34a"></div>
-      <div class="wbar" style="animation-delay:0.15s;height:8px;background:#16a34a"></div>
-      <div class="wbar" style="animation-delay:0.3s;height:12px;background:#16a34a"></div>
-      <div class="wbar" style="animation-delay:0.45s;height:6px;background:#16a34a"></div>
-      <div class="wbar" style="animation-delay:0.6s;height:10px;background:#16a34a"></div>
+      <div class="wbar" style="animation-delay:0s;height:4px;background:var(--l5)"></div>
+      <div class="wbar" style="animation-delay:.15s;height:8px;background:var(--l5)"></div>
+      <div class="wbar" style="animation-delay:.3s;height:12px;background:var(--l5)"></div>
+      <div class="wbar" style="animation-delay:.45s;height:6px;background:var(--l5)"></div>
+      <div class="wbar" style="animation-delay:.6s;height:10px;background:var(--l5)"></div>
     </div>
   </div>
 
-  <div class="prose reveal" style="transition-delay:0.2s">
-    <p>Hemos escuchado el origen, la magnitud y las consecuencias humanas del conflicto. Ahora miremos el presente. Porque <strong>el conflicto armado en Colombia no terminó con la firma del Acuerdo de Paz en 2016</strong>. Ese fue un hito histórico, sin duda. Pero el conflicto continúa, transformado, en muchas regiones del país.</p>
-  </div>
-
-  <div class="impact-row">
-    <div class="impact-card" style="background:linear-gradient(145deg, rgba(220,38,38,0.06), rgba(42,42,58,0.3));transition-delay:0.1s">
-      <h4>⚔️ Desde lo militar</h4>
-      <p>Grupos disidentes de las FARC, el ELN, el Clan del Golfo y otras organizaciones criminales siguen disputando territorios, especialmente en zonas donde el Estado sigue siendo débil o ausente.</p>
+  <div class="media-zone" id="mz-5">
+    <div class="upload-area" id="ua-5">
+      <div class="upload-icon">🎙️</div>
+      <div class="upload-title">Agrega tu contenido multimedia</div>
+      <div class="upload-sub">Sube el video o audio del Locutor 5 — Reflexión y cierre</div>
+      <div class="upload-btns">
+        <button class="upload-btn video" onclick="event.stopPropagation();document.getElementById('vi-5').click()">📹 Subir Video</button>
+        <button class="upload-btn audio" onclick="event.stopPropagation();document.getElementById('ai-5').click()">🎵 Subir Audio</button>
+      </div>
+      <input type="file" id="vi-5" accept="video/*" onchange="handleMedia(this,'mz-5','video')">
+      <input type="file" id="ai-5" accept="audio/*" onchange="handleMedia(this,'mz-5','audio')">
     </div>
-    <div class="impact-card" style="background:linear-gradient(145deg, rgba(124,58,237,0.06), rgba(42,42,58,0.3));transition-delay:0.2s">
-      <h4>🏛️ Desde lo político</h4>
-      <p>El proceso de implementación del acuerdo de paz ha sido lento y desigual. Las comunidades más afectadas siguen esperando que las promesas se conviertan en realidad.</p>
-    </div>
-    <div class="impact-card" style="background:linear-gradient(145deg, rgba(22,163,74,0.06), rgba(42,42,58,0.3));transition-delay:0.3s">
-      <h4>👥 Desde lo social</h4>
-      <p>La estigmatización de las víctimas, la impunidad y la falta de garantías de no repetición son desafíos que aún no se han superado.</p>
-    </div>
-  </div>
-
-  <div class="quote-block reveal">
-    <p>Las mismas causas estructurales que dieron origen al conflicto — la desigualdad, la exclusión, la pobreza rural, la concentración de la tierra — siguen siendo problemas vigentes. ¿Qué hizo posible que esto nos pasara? Una sociedad que durante décadas no pudo o no quiso transformar sus desigualdades más profundas.</p>
-    <cite>— Locutor 5</cite>
   </div>
 
   <div class="prose reveal">
-    <p><strong>Entender el conflicto no es solo un ejercicio académico.</strong> Es un acto de responsabilidad colectiva. Porque solo desde el conocimiento y la memoria podemos construir un país diferente. Un país donde las próximas generaciones no tengan que hacerse las mismas preguntas que nosotros nos estamos haciendo hoy.</p>
+    <p><strong>El conflicto armado no terminó con la firma del Acuerdo de Paz en 2016.</strong> Ese fue un hito histórico, pero el conflicto continúa, transformado, en muchas regiones del país.</p>
+  </div>
+
+  <div class="impact-row">
+    <div class="impact-card" style="background:linear-gradient(145deg,rgba(220,38,38,.06),rgba(42,42,58,.3));transition-delay:.1s"><h4>⚔️ Desde lo militar</h4><p>Disidencias FARC, ELN, Clan del Golfo siguen disputando territorios donde el Estado es débil.</p></div>
+    <div class="impact-card" style="background:linear-gradient(145deg,rgba(124,58,237,.06),rgba(42,42,58,.3));transition-delay:.2s"><h4>🏛️ Desde lo político</h4><p>Implementación lenta y desigual. Las comunidades más afectadas siguen esperando.</p></div>
+    <div class="impact-card" style="background:linear-gradient(145deg,rgba(22,163,74,.06),rgba(42,42,58,.3));transition-delay:.3s"><h4>👥 Desde lo social</h4><p>Estigmatización de víctimas, impunidad y falta de garantías de no repetición.</p></div>
   </div>
 
   <div class="quote-block reveal" style="border-left-color:var(--gold)">
-    <p>No miren el conflicto como algo lejano o ajeno. Afectó a millones de familias colombianas, y sus efectos siguen presentes. Informarse, escuchar a las víctimas y comprometerse con la construcción de paz desde los espacios cotidianos es la forma más concreta de hacer que esto no se repita.</p>
+    <p>Informarse, escuchar a las víctimas y comprometerse con la construcción de paz desde los espacios cotidianos es la forma más concreta de hacer que esto no se repita.</p>
     <cite>— Locutor 5, mensaje final</cite>
   </div>
 </section>
 
-<!-- Separator -->
 <div class="section-sep"><span class="sep-text">TERRITORIOS</span></div>
 
-<!-- ═══════════════ MAPA INTERACTIVO ═══════════════ -->
-<section class="chapter" id="mapa">
+<!-- ═══════════════ MAPA ═══════════════ -->
+<section class="chapter" id="mapa-section">
   <div class="reveal">
     <div class="chapter-num">Recurso interactivo</div>
     <div class="chapter-title">Territorios del conflicto</div>
-    <p style="font-size:0.9rem;color:var(--mist);margin-bottom:2rem">Selecciona una región en el mapa para explorar cómo vivió el conflicto cada territorio.</p>
+    <p style="font-size:.88rem;color:var(--mist);margin-bottom:1.8rem">Selecciona una región para explorar cómo vivió el conflicto cada territorio.</p>
   </div>
-
   <div class="map-wrapper reveal">
     <div class="map-svg-wrap">
       <svg width="100%" viewBox="0 0 320 460" style="display:block">
-        <rect width="320" height="460" fill="rgba(13,33,55,0.4)" rx="8"/>
+        <rect width="320" height="460" fill="rgba(13,33,55,.35)" rx="8"/>
         <polygon class="region-path" data-r="caribe" points="55,35 175,26 192,48 182,76 152,86 104,80 64,70 50,55" fill="#dc2626"/>
         <text class="region-label" x="122" y="58">Caribe</text>
         <polygon class="region-path" data-r="nsan" points="183,48 220,44 230,78 210,92 183,82 175,65" fill="#dc2626"/>
@@ -1156,8 +557,7 @@ body {
         <polygon class="region-path" data-r="cund" points="155,133 210,118 215,152 200,175 165,175 152,162" fill="#4ade80"/>
         <text class="region-label" x="183" y="152">Cund./Boyacá</text>
         <polygon class="region-path" data-r="llanos" points="210,78 280,70 298,108 293,192 248,200 215,190 206,158 215,118" fill="#dc2626"/>
-        <text class="region-label" x="253" y="135">Llanos</text>
-        <text class="region-label" x="253" y="145">Orientales</text>
+        <text class="region-label" x="253" y="135">Llanos</text><text class="region-label" x="253" y="145">Orientales</text>
         <polygon class="region-path" data-r="valle" points="48,180 92,157 138,152 143,200 128,230 82,234 48,214" fill="#dc2626"/>
         <text class="region-label" x="95" y="198">Valle/Cauca</text>
         <polygon class="region-path" data-r="tolima" points="138,152 165,175 200,175 205,215 186,244 152,248 134,224 133,190" fill="#ea580c"/>
@@ -1176,9 +576,7 @@ body {
         <text class="region-label" x="264" y="283">Vaupés</text>
         <polygon class="region-path" data-r="ama" points="152,300 223,286 256,316 250,365 200,374 152,358 140,330" fill="#4ade80"/>
         <text class="region-label" x="200" y="335">Amazonas</text>
-
-        <!-- Legend -->
-        <rect x="10" y="375" width="110" height="65" rx="5" fill="rgba(0,0,0,0.6)"/>
+        <rect x="10" y="375" width="110" height="65" rx="5" fill="rgba(0,0,0,.55)"/>
         <text x="18" y="389" font-size="7" fill="#94a3b8" font-family="sans-serif" font-weight="700">Nivel de afectación</text>
         <rect x="18" y="395" width="8" height="8" rx="2" fill="#dc2626"/><text x="30" y="402" font-size="7" fill="#cbd5e1" font-family="sans-serif">Muy alta</text>
         <rect x="18" y="407" width="8" height="8" rx="2" fill="#ea580c"/><text x="30" y="414" font-size="7" fill="#cbd5e1" font-family="sans-serif">Alta</text>
@@ -1186,98 +584,223 @@ body {
         <rect x="18" y="431" width="8" height="8" rx="2" fill="#4ade80"/><text x="30" y="438" font-size="7" fill="#cbd5e1" font-family="sans-serif">Baja</text>
       </svg>
     </div>
-
     <div class="map-panel">
-      <div class="map-info-card">
-        <h3>Región seleccionada</h3>
-        <div class="map-region-name" id="mapTitle">Selecciona una región</div>
-        <div class="map-region-place" id="mapPlace">Toca el mapa para explorar</div>
-        <div class="map-region-desc" id="mapDesc">Cada territorio vivió el conflicto de manera distinta. Las zonas con mayores recursos naturales, debilidad estatal y exclusión histórica concentraron la mayor victimización.</div>
-        <div class="actor-badges" id="mapBadges"></div>
-      </div>
-      <div class="map-info-card">
-        <h3>Actores armados presentes</h3>
-        <div class="actor-badges" id="mapActors">
-          <span class="actor-badge" style="background:rgba(220,38,38,0.15);color:#fca5a5">FARC-EP</span>
-          <span class="actor-badge" style="background:rgba(124,58,237,0.15);color:#c4b5fd">ELN</span>
-          <span class="actor-badge" style="background:rgba(234,88,12,0.15);color:#fdba74">AUC</span>
-          <span class="actor-badge" style="background:rgba(202,138,4,0.15);color:#fde047">Narcotráfico</span>
-        </div>
-      </div>
+      <div class="map-info-card"><h3>Región seleccionada</h3><div class="map-region-name" id="mapTitle">Selecciona una región</div><div class="map-region-place" id="mapPlace">Toca el mapa para explorar</div><div class="map-region-desc" id="mapDesc">Cada territorio vivió el conflicto de manera distinta.</div><div class="actor-badges" id="mapBadges"></div></div>
+      <div class="map-info-card"><h3>Actores armados presentes</h3><div class="actor-badges" id="mapActors"><span class="actor-badge" style="background:rgba(220,38,38,.15);color:#fca5a5">FARC-EP</span><span class="actor-badge" style="background:rgba(124,58,237,.15);color:#c4b5fd">ELN</span><span class="actor-badge" style="background:rgba(234,88,12,.15);color:#fdba74">AUC</span><span class="actor-badge" style="background:rgba(202,138,4,.15);color:#fde047">Narcotráfico</span></div></div>
     </div>
   </div>
 </section>
 
 <!-- ═══════════════ CIERRE ═══════════════ -->
 <div class="divider"></div>
-<section class="chapter" style="text-align:center;max-width:680px">
+<section class="chapter" style="text-align:center;max-width:660px">
   <div class="reveal">
     <div class="chapter-num" style="text-align:center">Cierre del episodio</div>
     <div class="chapter-title" style="margin-bottom:1.5rem">Gracias por escucharnos</div>
     <div class="prose" style="margin:0 auto;text-align:center">
       <p>Los invitamos a seguir reflexionando, a buscar más información, y a comprometerse con la memoria y la paz de Colombia.</p>
-      <p style="color:var(--gold);font-family:var(--serif);font-style:italic;font-size:1.2rem">«Solo desde el conocimiento y la memoria podemos construir un país diferente.»</p>
+      <p style="color:var(--gold);font-family:var(--serif);font-style:italic;font-size:1.15rem">«Solo desde el conocimiento y la memoria podemos construir un país diferente.»</p>
     </div>
   </div>
-
-  <!-- Videos adicionales -->
-  <h3 style="font-family:var(--serif);font-size:1.1rem;color:var(--parchment);margin:3rem 0 1rem" class="reveal">Material audiovisual complementario</h3>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem" class="reveal">
-    <div class="video-section" style="margin:0">
-      <div class="video-container">
-        <iframe src="https://www.youtube.com/embed/aRX_Lk6XtZw" title="Basta Ya Montes de María" allowfullscreen loading="lazy"></iframe>
-      </div>
-      <div class="video-caption">
-        <div class="v-text">
-          <h5>¡Basta Ya! Montes de María</h5>
-          <p>Memorias de identidad y resistencia</p>
-        </div>
-      </div>
-    </div>
-    <div class="video-section" style="margin:0">
-      <div class="video-container">
-        <iframe src="https://www.youtube.com/embed/cVw7Z_pMkbo" title="Pequeñas voces" allowfullscreen loading="lazy"></iframe>
-      </div>
-      <div class="video-caption">
-        <div class="v-text">
-          <h5>Pequeñas voces</h5>
-          <p>El conflicto desde la mirada de los niños</p>
-        </div>
-      </div>
-    </div>
+  <h3 style="font-family:var(--serif);font-size:1.05rem;color:var(--parchment);margin:2.5rem 0 1rem" class="reveal">Material audiovisual complementario</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem" class="reveal video-grid-2">
+    <div class="video-section" style="margin:0"><div class="video-container"><iframe src="https://www.youtube.com/embed/aRX_Lk6XtZw" title="Basta Ya Montes de María" allowfullscreen loading="lazy"></iframe></div><div class="video-caption"><div class="v-text"><h5>¡Basta Ya! Montes de María</h5><p>Memorias de identidad y resistencia</p></div></div></div>
+    <div class="video-section" style="margin:0"><div class="video-container"><iframe src="https://www.youtube.com/embed/cVw7Z_pMkbo" title="Pequeñas voces" allowfullscreen loading="lazy"></iframe></div><div class="video-caption"><div class="v-text"><h5>Pequeñas voces</h5><p>El conflicto desde la mirada de los niños</p></div></div></div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer class="footer">
   <div class="brand">Lo que nos pasó</div>
-  <p>Podcast Académico · Módulo 1 · IPAZUD<br>
-  Universidad Distrital Francisco José de Caldas<br>
-  Seguimiento a los Acuerdos de Paz · 2026-1</p>
+  <p>Podcast Académico · Módulo 1 · IPAZUD<br>Universidad Distrital Francisco José de Caldas<br>Seguimiento a los Acuerdos de Paz · 2026-1</p>
 </footer>
 
 <script>
+// ═══ PARTICLES ═══
+(function(){
+  const c=document.getElementById('particles');
+  for(let i=0;i<30;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    p.style.left=Math.random()*100+'%';
+    p.style.animationDuration=(8+Math.random()*12)+'s';
+    p.style.animationDelay=Math.random()*10+'s';
+    p.style.width=p.style.height=(1+Math.random()*2)+'px';
+    c.appendChild(p);
+  }
+})();
+
+// ═══ AMBIENT MUSIC (Web Audio API) ═══
+let audioCtx=null, musicPlaying=false, musicNodes=[];
+const musicBtn=document.getElementById('musicToggle');
+
+function createAmbientMusic(){
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  const master=audioCtx.createGain();
+  master.gain.value=0.12;
+  master.connect(audioCtx.destination);
+
+  // Pad drone - C minor chord
+  const freqs=[65.41,77.78,98,130.81,155.56];
+  freqs.forEach((f,i)=>{
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
+    const filter=audioCtx.createBiquadFilter();
+    osc.type='sine';
+    osc.frequency.value=f;
+    filter.type='lowpass';
+    filter.frequency.value=400;
+    filter.Q.value=1;
+    gain.gain.value=0.06;
+    // Slow LFO for movement
+    const lfo=audioCtx.createOscillator();
+    const lfoGain=audioCtx.createGain();
+    lfo.frequency.value=0.1+i*0.05;
+    lfoGain.gain.value=0.02;
+    lfo.connect(lfoGain);
+    lfoGain.connect(gain.gain);
+    lfo.start();
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(master);
+    osc.start();
+    musicNodes.push(osc,lfo);
+  });
+
+  // Subtle noise layer
+  const bufferSize=2*audioCtx.sampleRate;
+  const noiseBuffer=audioCtx.createBuffer(1,bufferSize,audioCtx.sampleRate);
+  const output=noiseBuffer.getChannelData(0);
+  for(let i=0;i<bufferSize;i++) output[i]=(Math.random()*2-1)*0.008;
+  const noise=audioCtx.createBufferSource();
+  noise.buffer=noiseBuffer;
+  noise.loop=true;
+  const noiseFilter=audioCtx.createBiquadFilter();
+  noiseFilter.type='lowpass';
+  noiseFilter.frequency.value=200;
+  noise.connect(noiseFilter);
+  noiseFilter.connect(master);
+  noise.start();
+  musicNodes.push(noise);
+}
+
+musicBtn.addEventListener('click',()=>{
+  if(!musicPlaying){
+    if(!audioCtx) createAmbientMusic();
+    else audioCtx.resume();
+    musicBtn.classList.add('playing');
+    musicPlaying=true;
+  } else {
+    audioCtx.suspend();
+    musicBtn.classList.remove('playing');
+    musicPlaying=false;
+  }
+});
+
+// ═══ MEDIA UPLOAD HANDLER ═══
+function handleMedia(input, zoneId, type){
+  const file=input.files[0];
+  if(!file) return;
+  const zone=document.getElementById(zoneId);
+  const url=URL.createObjectURL(file);
+  zone.classList.add('has-media');
+
+  let html='<div class="media-preview" style="position:relative">';
+  html+='<button class="remove-media" onclick="removeMedia(\''+zoneId+'\',\''+input.id+'\')" title="Quitar">✕</button>';
+
+  if(type==='video'){
+    html+='<video controls preload="metadata"><source src="'+url+'" type="'+file.type+'"></video>';
+  } else {
+    const color=getLocutorColor(zoneId);
+    html+='<div class="audio-vis" style="background:linear-gradient(135deg,rgba(42,42,58,.6),rgba(26,26,36,.8))">';
+    html+='<div class="av-icon" style="background:'+color+'" onclick="this.parentElement.querySelector(\'audio\').paused?this.parentElement.querySelector(\'audio\').play():this.parentElement.querySelector(\'audio\').pause()">▶</div>';
+    html+='<div style="flex:1"><div style="font-size:.85rem;color:var(--parchment);font-weight:600;margin-bottom:2px">'+file.name+'</div>';
+    html+='<div class="audio-wave-container" id="awc-'+zoneId+'">';
+    for(let i=0;i<40;i++) html+='<div class="awbar" style="height:'+Math.max(3,Math.random()*28)+'px;background:'+color+';opacity:.6"></div>';
+    html+='</div>';
+    html+='<audio controls style="width:100%;margin-top:8px;height:36px"><source src="'+url+'" type="'+file.type+'"></audio>';
+    html+='</div></div>';
+  }
+  html+='</div>';
+
+  // Replace upload area with preview
+  const uploadArea=document.getElementById('ua-'+zoneId.split('-')[1]);
+  if(uploadArea) uploadArea.style.display='none';
+  const preview=document.createElement('div');
+  preview.id='mp-'+zoneId;
+  preview.innerHTML=html;
+  zone.appendChild(preview);
+
+  // Animate audio bars when playing
+  if(type==='audio'){
+    setTimeout(()=>{
+      const audio=zone.querySelector('audio');
+      if(audio){
+        audio.addEventListener('play',()=>animateAudioBars(zoneId,true));
+        audio.addEventListener('pause',()=>animateAudioBars(zoneId,false));
+        audio.addEventListener('ended',()=>animateAudioBars(zoneId,false));
+      }
+    },100);
+  }
+}
+
+function getLocutorColor(zoneId){
+  const colors={'mz-1':'#7c3aed','mz-2':'#0891b2','mz-3':'#ea580c','mz-4':'#e11d48','mz-5':'#16a34a'};
+  return colors[zoneId]||'#c9a84c';
+}
+
+let audioAnimFrames={};
+function animateAudioBars(zoneId, play){
+  const container=document.getElementById('awc-'+zoneId);
+  if(!container) return;
+  if(!play){
+    cancelAnimationFrame(audioAnimFrames[zoneId]);
+    container.querySelectorAll('.awbar').forEach(b=>b.style.height=Math.max(3,Math.random()*10)+'px');
+    return;
+  }
+  let phase=0;
+  function anim(){
+    phase+=0.12;
+    container.querySelectorAll('.awbar').forEach((b,i)=>{
+      const w=(Math.sin(phase+i*0.4)+1)/2;
+      const n=Math.random()*0.3;
+      b.style.height=Math.max(3,(w*0.6+n*0.4)*32)+'px';
+    });
+    audioAnimFrames[zoneId]=requestAnimationFrame(anim);
+  }
+  anim();
+}
+
+function removeMedia(zoneId, inputId){
+  const zone=document.getElementById(zoneId);
+  const preview=document.getElementById('mp-'+zoneId);
+  if(preview) preview.remove();
+  zone.classList.remove('has-media');
+  const num=zoneId.split('-')[1];
+  const uploadArea=document.getElementById('ua-'+num);
+  if(uploadArea) uploadArea.style.display='';
+  document.getElementById(inputId).value='';
+  cancelAnimationFrame(audioAnimFrames[zoneId]);
+}
+
 // ═══ MAP DATA ═══
 const mapData={
-  caribe:{name:'Costa Caribe',place:'Atlántico, Bolívar, Córdoba, Sucre, Magdalena',desc:'Fuertemente afectada por el paramilitarismo. Las masacres en Montes de María dejaron miles de desplazados y comunidades destruidas.',badges:[{t:'Paramilitarismo',bg:'rgba(220,38,38,0.15)',c:'#fca5a5'},{t:'Masacres',bg:'rgba(220,38,38,0.15)',c:'#fca5a5'}],actors:['FARC-EP','AUC','Narcotráfico']},
-  nsan:{name:'Norte de Santander',place:'Cúcuta, Catatumbo',desc:'Zona de disputa entre ELN, FARC y paramilitares. El Catatumbo concentró cultivos de coca y fue escenario de masacres y desplazamientos masivos.',badges:[{t:'ELN',bg:'rgba(124,58,237,0.15)',c:'#c4b5fd'},{t:'Catatumbo',bg:'rgba(234,88,12,0.15)',c:'#fdba74'}],actors:['FARC-EP','ELN','Narcotráfico']},
-  ant:{name:'Antioquia',place:'Urabá, Bajo Cauca, Nordeste, Oriente',desc:'Uno de los departamentos más afectados. El Urabá fue epicentro de la confrontación entre FARC, ELN y paramilitares con altísimas tasas de homicidio.',badges:[{t:'Muy alta victimización',bg:'rgba(220,38,38,0.15)',c:'#fca5a5'},{t:'Urabá',bg:'rgba(234,88,12,0.15)',c:'#fdba74'}],actors:['FARC-EP','ELN','AUC']},
-  choco:{name:'Chocó',place:'Pacífico colombiano',desc:'Marginado históricamente. La disputa por sus ríos entre grupos armados generó masivos desplazamientos de comunidades afrocolombianas e indígenas.',badges:[{t:'Comunidades étnicas',bg:'rgba(124,58,237,0.15)',c:'#c4b5fd'},{t:'Marginalidad estatal',bg:'rgba(234,88,12,0.15)',c:'#fdba74'}],actors:['FARC-EP','ELN']},
-  san:{name:'Santander',place:'Barrancabermeja, Magdalena Medio',desc:'El Magdalena Medio fue zona de surgimiento paramilitar y disputa petrolera. Barrancabermeja concentró violencia sindical.',badges:[{t:'Paramilitarismo',bg:'rgba(220,38,38,0.15)',c:'#fca5a5'},{t:'Petróleo',bg:'rgba(202,138,4,0.15)',c:'#fde047'}],actors:['AUC','ELN']},
-  cund:{name:'Boyacá / Cundinamarca',place:'Centro del país',desc:'Afectado moderadamente. Algunas zonas sufrieron presencia guerrillera, pero la centralidad del Estado redujo el impacto frente a la periferia.',badges:[{t:'Impacto moderado',bg:'rgba(202,138,4,0.15)',c:'#fde047'}],actors:['FARC-EP']},
-  llanos:{name:'Llanos Orientales',place:'Meta, Casanare, Vichada',desc:'Territorios de retaguardia histórica de las FARC. Meta fue escenario de grandes operaciones militares. Ricos en petróleo y coca.',badges:[{t:'FARC retaguardia',bg:'rgba(220,38,38,0.15)',c:'#fca5a5'},{t:'Petróleo / coca',bg:'rgba(202,138,4,0.15)',c:'#fde047'}],actors:['FARC-EP','Narcotráfico']},
-  valle:{name:'Valle del Cauca / Cauca',place:'Cali, Buenaventura, Cauca',desc:'Buenaventura concentró violencia urbana extrema. El Cauca fue corredor estratégico de las FARC y zona de comunidades indígenas Nasa gravemente afectadas.',badges:[{t:'Corredor pacífico',bg:'rgba(234,88,12,0.15)',c:'#fdba74'},{t:'Indígenas Nasa',bg:'rgba(124,58,237,0.15)',c:'#c4b5fd'}],actors:['FARC-EP','ELN']},
-  tolima:{name:'Tolima / Huila',place:'Centro del país',desc:'El Tolima fue cuna histórica de las FARC en 1964. Zona de conflicto activo por décadas. El Huila sufrió ataques a infraestructura.',badges:[{t:'Origen FARC 1964',bg:'rgba(220,38,38,0.15)',c:'#fca5a5'}],actors:['FARC-EP']},
-  narino:{name:'Nariño',place:'Frontera con Ecuador',desc:'Corredor de coca hacia el Pacífico. Disputado entre FARC, ELN y grupos post-FARC. Minas antipersona y masacres afectaron comunidades campesinas.',badges:[{t:'Minas antipersona',bg:'rgba(220,38,38,0.15)',c:'#fca5a5'},{t:'Frontera',bg:'rgba(234,88,12,0.15)',c:'#fdba74'}],actors:['FARC-EP','ELN','Narcotráfico']},
-  putumayo:{name:'Putumayo',place:'Frontera amazónica',desc:'Uno de los departamentos con mayor cultivo de coca. Epicentro del Plan Colombia. Las FARC tuvieron fuerte presencia durante décadas.',badges:[{t:'Mayor zona de coca',bg:'rgba(220,38,38,0.15)',c:'#fca5a5'},{t:'Plan Colombia',bg:'rgba(202,138,4,0.15)',c:'#fde047'}],actors:['FARC-EP','Narcotráfico']},
-  caqueta:{name:'Caquetá',place:'Amazonía norte',desc:'Zona de control histórico de las FARC-EP. El conflicto fue especialmente intenso entre 1996 y 2008. El desplazamiento masivo devastó comunidades campesinas.',badges:[{t:'Control FARC',bg:'rgba(220,38,38,0.15)',c:'#fca5a5'},{t:'Alta victimización',bg:'rgba(220,38,38,0.15)',c:'#fca5a5'}],actors:['FARC-EP']},
-  bolivar:{name:'Bolívar',place:'Montes de María, Sur de Bolívar',desc:'Montes de María fue escenario de las masacres más emblemáticas. El Sur de Bolívar fue zona de disputa minera. Fuerte presencia de AUC.',badges:[{t:'Masacres emblemáticas',bg:'rgba(220,38,38,0.15)',c:'#fca5a5'},{t:'Montes de María',bg:'rgba(234,88,12,0.15)',c:'#fdba74'}],actors:['AUC','FARC-EP','ELN']},
-  guav:{name:'Guaviare',place:'Llanos / Amazonía',desc:'Corredor entre los Llanos y la Amazonía con fuerte presencia guerrillera y cultivos de coca.',badges:[{t:'Corredor coca',bg:'rgba(234,88,12,0.15)',c:'#fdba74'}],actors:['FARC-EP','Narcotráfico']},
-  vaupes:{name:'Vaupés',place:'Oriente amazónico',desc:'Zona remota con baja intensidad del conflicto directo, pero con presencia guerrillera esporádica.',badges:[{t:'Bajo impacto',bg:'rgba(74,222,128,0.1)',c:'#4ade80'}],actors:['FARC-EP']},
-  ama:{name:'Amazonas',place:'Amazonía profunda',desc:'Relativamente menos afectada por el conflicto armado directo. Las comunidades indígenas vivieron en aislamiento protector relativo.',badges:[{t:'Bajo impacto directo',bg:'rgba(74,222,128,0.1)',c:'#4ade80'},{t:'Pueblos indígenas',bg:'rgba(124,58,237,0.15)',c:'#c4b5fd'}],actors:['Presencia mínima']}
+  caribe:{name:'Costa Caribe',place:'Atlántico, Bolívar, Córdoba, Sucre, Magdalena',desc:'Fuertemente afectada por el paramilitarismo. Las masacres en Montes de María dejaron miles de desplazados.',badges:[{t:'Paramilitarismo',bg:'rgba(220,38,38,.15)',c:'#fca5a5'},{t:'Masacres',bg:'rgba(220,38,38,.15)',c:'#fca5a5'}],actors:['FARC-EP','AUC','Narcotráfico']},
+  nsan:{name:'Norte de Santander',place:'Cúcuta, Catatumbo',desc:'Disputa entre ELN, FARC y paramilitares. Cultivos de coca, masacres y desplazamientos masivos.',badges:[{t:'ELN',bg:'rgba(124,58,237,.15)',c:'#c4b5fd'},{t:'Catatumbo',bg:'rgba(234,88,12,.15)',c:'#fdba74'}],actors:['FARC-EP','ELN','Narcotráfico']},
+  ant:{name:'Antioquia',place:'Urabá, Bajo Cauca, Nordeste, Oriente',desc:'Uno de los más afectados. Urabá fue epicentro de confrontación con altísimas tasas de homicidio.',badges:[{t:'Muy alta victimización',bg:'rgba(220,38,38,.15)',c:'#fca5a5'},{t:'Urabá',bg:'rgba(234,88,12,.15)',c:'#fdba74'}],actors:['FARC-EP','ELN','AUC']},
+  choco:{name:'Chocó',place:'Pacífico colombiano',desc:'Marginado históricamente. Desplazamientos masivos de comunidades afrocolombianas e indígenas.',badges:[{t:'Comunidades étnicas',bg:'rgba(124,58,237,.15)',c:'#c4b5fd'}],actors:['FARC-EP','ELN']},
+  san:{name:'Santander',place:'Barrancabermeja, Magdalena Medio',desc:'Surgimiento paramilitar y disputa petrolera. Violencia sindical concentrada.',badges:[{t:'Paramilitarismo',bg:'rgba(220,38,38,.15)',c:'#fca5a5'},{t:'Petróleo',bg:'rgba(202,138,4,.15)',c:'#fde047'}],actors:['AUC','ELN']},
+  cund:{name:'Boyacá / Cundinamarca',place:'Centro del país',desc:'Afectado moderadamente. La centralidad del Estado redujo el impacto.',badges:[{t:'Impacto moderado',bg:'rgba(202,138,4,.15)',c:'#fde047'}],actors:['FARC-EP']},
+  llanos:{name:'Llanos Orientales',place:'Meta, Casanare, Vichada',desc:'Retaguardia histórica de las FARC. Grandes operaciones militares. Petróleo y coca.',badges:[{t:'FARC retaguardia',bg:'rgba(220,38,38,.15)',c:'#fca5a5'},{t:'Petróleo/coca',bg:'rgba(202,138,4,.15)',c:'#fde047'}],actors:['FARC-EP','Narcotráfico']},
+  valle:{name:'Valle del Cauca / Cauca',place:'Cali, Buenaventura, Cauca',desc:'Buenaventura: violencia urbana extrema. Cauca: corredor FARC y comunidades Nasa afectadas.',badges:[{t:'Corredor pacífico',bg:'rgba(234,88,12,.15)',c:'#fdba74'},{t:'Indígenas Nasa',bg:'rgba(124,58,237,.15)',c:'#c4b5fd'}],actors:['FARC-EP','ELN']},
+  tolima:{name:'Tolima / Huila',place:'Centro del país',desc:'Cuna histórica de las FARC (1964). Conflicto activo por décadas.',badges:[{t:'Origen FARC 1964',bg:'rgba(220,38,38,.15)',c:'#fca5a5'}],actors:['FARC-EP']},
+  narino:{name:'Nariño',place:'Frontera con Ecuador',desc:'Corredor de coca hacia el Pacífico. Minas antipersona y masacres.',badges:[{t:'Minas antipersona',bg:'rgba(220,38,38,.15)',c:'#fca5a5'},{t:'Frontera',bg:'rgba(234,88,12,.15)',c:'#fdba74'}],actors:['FARC-EP','ELN','Narcotráfico']},
+  putumayo:{name:'Putumayo',place:'Frontera amazónica',desc:'Mayor cultivo de coca. Epicentro del Plan Colombia.',badges:[{t:'Mayor zona de coca',bg:'rgba(220,38,38,.15)',c:'#fca5a5'},{t:'Plan Colombia',bg:'rgba(202,138,4,.15)',c:'#fde047'}],actors:['FARC-EP','Narcotráfico']},
+  caqueta:{name:'Caquetá',place:'Amazonía norte',desc:'Control histórico FARC. Conflicto intenso 1996–2008. Desplazamiento masivo.',badges:[{t:'Control FARC',bg:'rgba(220,38,38,.15)',c:'#fca5a5'}],actors:['FARC-EP']},
+  bolivar:{name:'Bolívar',place:'Montes de María, Sur de Bolívar',desc:'Masacres emblemáticas en Montes de María. Disputa minera. Fuerte AUC.',badges:[{t:'Masacres emblemáticas',bg:'rgba(220,38,38,.15)',c:'#fca5a5'},{t:'Montes de María',bg:'rgba(234,88,12,.15)',c:'#fdba74'}],actors:['AUC','FARC-EP','ELN']},
+  guav:{name:'Guaviare',place:'Llanos / Amazonía',desc:'Corredor Llanos-Amazonía. Guerrilla y cultivos de coca.',badges:[{t:'Corredor coca',bg:'rgba(234,88,12,.15)',c:'#fdba74'}],actors:['FARC-EP','Narcotráfico']},
+  vaupes:{name:'Vaupés',place:'Oriente amazónico',desc:'Zona remota, baja intensidad. Presencia guerrillera esporádica.',badges:[{t:'Bajo impacto',bg:'rgba(74,222,128,.1)',c:'#4ade80'}],actors:['FARC-EP']},
+  ama:{name:'Amazonas',place:'Amazonía profunda',desc:'Menos afectada. Comunidades indígenas en aislamiento protector relativo.',badges:[{t:'Bajo impacto',bg:'rgba(74,222,128,.1)',c:'#4ade80'},{t:'Pueblos indígenas',bg:'rgba(124,58,237,.15)',c:'#c4b5fd'}],actors:['Presencia mínima']}
 };
-
-// Map interaction
 document.querySelectorAll('.region-path').forEach(el=>{
   el.addEventListener('click',()=>{
     document.querySelectorAll('.region-path').forEach(e=>e.classList.remove('selected'));
@@ -1287,90 +810,60 @@ document.querySelectorAll('.region-path').forEach(el=>{
     document.getElementById('mapPlace').textContent=d.place;
     document.getElementById('mapDesc').textContent=d.desc;
     document.getElementById('mapBadges').innerHTML=d.badges.map(b=>`<span class="actor-badge" style="background:${b.bg};color:${b.c}">${b.t}</span>`).join('');
-    document.getElementById('mapActors').innerHTML=d.actors.map(a=>`<span class="actor-badge" style="background:rgba(201,168,76,0.1);color:#c9a84c">${a}</span>`).join('');
+    document.getElementById('mapActors').innerHTML=d.actors.map(a=>`<span class="actor-badge" style="background:rgba(201,168,76,.1);color:#c9a84c">${a}</span>`).join('');
   });
 });
 
-// ═══ SCROLL REVEAL ═══
-const revealObserver = new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.classList.add('visible');
-    }
-  });
-},{threshold:0.1, rootMargin:'0px 0px -40px 0px'});
+// ═══ SCROLL ANIMATIONS ═══
+const revealObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:.1,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal,.tl-event,.cause-card,.impact-card').forEach(el=>revealObs.observe(el));
 
-document.querySelectorAll('.reveal, .tl-event, .cause-card, .impact-card').forEach(el=>{
-  revealObserver.observe(el);
-});
-
-// ═══ NAV VISIBILITY ═══
-let lastScroll=0;
-const nav=document.getElementById('mainNav');
+// ═══ NAV + PROGRESS ═══
 window.addEventListener('scroll',()=>{
   const st=window.scrollY;
-  nav.classList.toggle('visible', st > 400);
-  lastScroll=st;
-
-  // Reading progress
+  document.getElementById('mainNav').classList.toggle('visible',st>350);
   const h=document.documentElement.scrollHeight-window.innerHeight;
-  const pct=(st/h)*100;
-  document.getElementById('readingProgress').style.width=pct+'%';
-
-  // Active nav link
-  const sections=['intro','origenes','violencia','consecuencias','presente','mapa'];
+  document.getElementById('readingProgress').style.width=(st/h)*100+'%';
+  const secs=['intro','sec1','origenes','violencia','consecuencias','presente','mapa-section'];
+  const anchors=['intro','origenes','violencia','consecuencias','presente','mapa-section'];
   const links=document.querySelectorAll('.nav-links a');
-  for(let i=sections.length-1;i>=0;i--){
-    const sec=document.getElementById(sections[i]);
-    if(sec && st >= sec.offsetTop - 200){
-      links.forEach(l=>l.classList.remove('active'));
-      links[i].classList.add('active');
-      break;
-    }
+  for(let i=anchors.length-1;i>=0;i--){
+    const sec=document.getElementById(anchors[i]);
+    if(sec&&st>=sec.offsetTop-200){links.forEach(l=>l.classList.remove('active'));if(links[i])links[i].classList.add('active');break;}
   }
 },{passive:true});
 
 // ═══ ANIMATED COUNTERS ═══
-let statsAnimated=false;
-const statsObserver=new IntersectionObserver((entries)=>{
-  if(entries[0].isIntersecting && !statsAnimated){
-    statsAnimated=true;
-    animateStats();
-  }
-},{threshold:0.3});
-statsObserver.observe(document.getElementById('statsGrid'));
-
+let statsAnim=false;
+const statsObs=new IntersectionObserver(entries=>{
+  if(entries[0].isIntersecting&&!statsAnim){statsAnim=true;animateStats();}
+},{threshold:.3});
+statsObs.observe(document.getElementById('statsGrid'));
 function animateStats(){
   document.querySelectorAll('.stat-number').forEach(el=>{
-    const target=parseFloat(el.dataset.target);
-    const format=el.dataset.format;
-    const duration=2000;
-    const steps=80;
-    const interval=duration/steps;
-    let step=0;
-    const timer=setInterval(()=>{
-      step++;
-      const ease=1-Math.pow(1-(step/steps),3);
-      const val=target*ease;
+    const target=parseFloat(el.dataset.target),format=el.dataset.format;
+    const dur=2000,steps=80,interval=dur/steps;let step=0;
+    const t=setInterval(()=>{
+      step++;const ease=1-Math.pow(1-(step/steps),3),val=target*ease;
       switch(format){
-        case 'mil': el.textContent=Math.round(val/1000)+' mil'; break;
-        case 'pct': el.textContent=Math.round(val)+'%'; break;
-        case 'mill': el.textContent=val.toFixed(1)+' mill.'; break;
-        case 'mil+': el.textContent='+'+Math.round(val/1000)+' mil'; break;
+        case'mil':el.textContent=Math.round(val/1000)+' mil';break;
+        case'pct':el.textContent=Math.round(val)+'%';break;
+        case'mill':el.textContent=val.toFixed(1)+' mill.';break;
+        case'mil+':el.textContent='+'+Math.round(val/1000)+' mil';break;
       }
-      if(step>=steps){
-        clearInterval(timer);
+      if(step>=steps){clearInterval(t);
         switch(format){
-          case 'mil': el.textContent=(target/1000)+' mil'; break;
-          case 'pct': el.textContent=target+'%'; break;
-          case 'mill': el.textContent=target.toFixed(0)+' mill.'; break;
-          case 'mil+': el.textContent='+'+(target/1000)+' mil'; break;
+          case'mil':el.textContent=(target/1000)+' mil';break;
+          case'pct':el.textContent=target+'%';break;
+          case'mill':el.textContent=target.toFixed(0)+' mill.';break;
+          case'mil+':el.textContent='+'+(target/1000)+' mil';break;
         }
       }
     },interval);
   });
 }
 </script>
-
 </body>
 </html>
